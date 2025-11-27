@@ -1,0 +1,12 @@
+{{ define "main" }}
+  <div id="react-home-root"></div>
+  {{ .Content }}
+  {{ range site.RegularPages }}
+    <section>
+      <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+      {{ .Summary }}
+    </section>
+
+  {{ end }}
+  <script type="module" src="/react/home.bundle.js"></script>
+{{ end }}
