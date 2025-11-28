@@ -7,3 +7,39 @@
     {{- end }}
   {{- end }}
 {{- end }}
+
+{{/* Page-specific CSS by kind/section */}}
+{{- $kind := .Kind -}}
+{{- $section := .Section -}}
+
+{{- if eq $kind "home" -}}
+  {{- with resources.Get "css/home.css" -}}
+    {{- if hugo.IsDevelopment -}}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{- else -}}
+      {{- with . | minify | fingerprint -}}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- else if or (eq $kind "page") (eq $section "posts") -}}
+  {{- with resources.Get "css/page.css" -}}
+    {{- if hugo.IsDevelopment -}}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{- else -}}
+      {{- with . | minify | fingerprint -}}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- else if or (eq $kind "taxonomy") (eq $kind "term") -}}
+  {{- with resources.Get "css/taxonomy.css" -}}
+    {{- if hugo.IsDevelopment -}}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{- else -}}
+      {{- with . | minify | fingerprint -}}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

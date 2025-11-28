@@ -95,6 +95,11 @@
     padding-right: 0.5rem;
   }
 
+  /* Drift article styles */
+  .article-header { margin-top: var(--space-3); margin-bottom: var(--space-2); }
+  .article-title { font-size: 1.8rem; line-height: 1.3; color: var(--color-text); }
+  .article-meta { color: var(--color-text-muted); font-size: 0.95rem; }
+
   article h1 {
     border-bottom: 1px solid #CCC;
     padding-bottom: 3px;
@@ -143,34 +148,7 @@
     object-fit: contain;
   }
 
-  /* .scrollToTop */
-
-  :root {
-    --color-primary: #005AF0;
-    --color-secondary: #00DCC0;
-    --color-text-light: #fff;
-    --space-2: 1rem;
-    /* 16px */
-    --box-shadow-1: 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 1px -1px rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
-  }
-
-  .scrollToTop {
-    color: var(--color-text-light);
-    font-size: 1.4em;
-    box-shadow: var(--box-shadow-1);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: none;
-    outline: none;
-    background: var(--color-primary);
-    z-index: 9999;
-    bottom: var(--space-2);
-    right: var(--space-2);
-    position: fixed;
-    opacity: 0;
-    visibility: hidden;
-  }
+  /* .scrollToTop moved to global main.css */
 
   .spacer {
     width: 100vw;
@@ -201,12 +179,12 @@
     margin-right: 0.5rem;
   }
 
-  #post-categories ul li.category-item {
-    font-size: x-small;
-    text-transform: uppercase;
-  }
-
+  #post-categories ul li.category-item { font-size: 0.75rem; text-transform: uppercase; color: var(--color-text-muted); }
   #post-tags ul li.tag-item {
-    background-color: greenyellow;
-    font-size: small;
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-1);
+    background: rgba(0, 90, 240, 0.08);
+    color: var(--color-primary);
+    font-size: 0.85rem;
   }

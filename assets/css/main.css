@@ -9,6 +9,40 @@
    margin: 0
  }
 
+/* Drift theme global variables */
+:root {
+  --color-primary: #005AF0;
+  --color-secondary: #00DCC0;
+  --color-bg: #ffffff;
+  --color-text: #1f2937;
+  --color-text-muted: #6b7280;
+  --color-text-light: #ffffff;
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --radius-1: 6px;
+  --box-shadow-1: 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 1px -1px rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+}
+
+/* Global scroll-to-top button (used by React component) */
+.scrollToTop {
+  color: var(--color-text-light);
+  font-size: 1.4em;
+  box-shadow: var(--box-shadow-1);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  background: var(--color-primary);
+  z-index: 9999;
+  bottom: var(--space-2);
+  right: var(--space-2);
+  position: fixed;
+  opacity: 0;
+  visibility: hidden;
+}
+
  #home a {
    text-decoration: none;
  }

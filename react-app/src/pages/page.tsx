@@ -1,8 +1,6 @@
 // react-app/src/pages/single.tsx
-import { LikeButton } from '../components/LikeButton';
-import ScrollToTop from '../components/ScrollToTop';
-import { mountComponents } from '../utils/mount';
+import { mountComponent } from '../utils/mount';
+import SingleActions from '../components/SingleActions';
 
-// 挂载
-// 推荐：一次性在同一容器挂载多个组件
-mountComponents('react-single-actions', [ScrollToTop, LikeButton]);
+// Mount a Fluent-styled composite component
+mountComponent('react-single-actions', SingleActions);

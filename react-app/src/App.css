@@ -1,3 +1,43 @@
+/* Container for Three.js canvas */
+.three-container {
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+
+/* Center the React-mounted actions container on the page */
+#react-single-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 60vh;
+  margin: 0 auto;
+}
+
+/* Fluent card layout for SingleActions */
+.single-actions-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.single-actions-card {
+  max-width: 900px;
+  width: 100%;
+}
+
+.single-actions-preview {
+  padding: 12px;
+}
+
+.single-actions-footer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
 #root {
   max-width: 1280px;
   margin: 0 auto;
