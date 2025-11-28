@@ -1,0 +1,212 @@
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: 0.5rem;
+  }
+
+  .ampstart-subtitle, body {
+    line-height: 1.5rem;
+    letter-spacing: normal
+  }
+
+  .ampstart-subtitle {
+    color: #003f93;
+    font-size: 1rem
+  }
+
+  .ampstart-image-fullpage-hero {
+    color: #fff
+  }
+
+  .ampstart-fullpage-hero-heading-text, .ampstart-image-fullpage-hero .ampstart-image-credit {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    background: #000;
+    padding: 0 1rem .2rem
+  }
+
+  .ampstart-image-fullpage-hero>amp-img {
+    max-height: calc(100vh - 3.5rem)
+  }
+
+  .ampstart-image-fullpage-hero>amp-img img {
+    -o-object-fit: cover;
+    object-fit: cover
+  }
+
+  .ampstart-fullpage-hero-heading {
+    line-height: 3.5rem
+  }
+
+  .ampstart-fullpage-hero-cta {
+    background: transparent
+  }
+
+  .ampstart-readmore {
+    background: linear-gradient(0deg, rgba(0, 0, 0, .65) 0, transparent);
+    color: #fff;
+    margin-top: 5rem;
+    padding-bottom: 3.5rem
+  }
+
+  .ampstart-readmore:after {
+    display: block;
+    content: "⌄";
+    font-size: 2rem
+  }
+
+  .ampstart-readmore-text {
+    background: #000
+  }
+
+  @media (min-width:52.06rem) {
+    .ampstart-image-fullpage-hero>amp-img {
+      height: 60vh
+    }
+  }
+
+  .ampstart-image-heading {
+    color: #fff;
+    background: linear-gradient(0deg, rgba(0, 0, 0, .65) 0, transparent)
+  }
+
+  .ampstart-image-heading>* {
+    margin: 0
+  }
+
+  amp-carousel .ampstart-image-with-heading {
+    margin-bottom: 0
+  }
+
+  .ampstart-image-with-caption figcaption {
+    color: #4f4f4f;
+    line-height: 1.125rem
+  }
+
+  amp-carousel .ampstart-image-with-caption {
+    margin-bottom: 0
+  }
+
+  /* article */
+
+  article.text-content {
+    padding-top: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  article h1 {
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 3px;
+    margin-bottom: 1rem;
+  }
+
+  h2::before {
+    content: ' ';
+    margin-top: 3rem;
+    display: inline-block;
+  }
+
+  h3::before {
+    content: ' ';
+    margin-top: 2rem;
+    display: inline-block;
+  }
+
+  h4::before {
+    content: ' ';
+    margin-top: 1rem;
+    display: inline-block;
+  }
+
+  article pre {
+    overflow-x: auto
+  }
+
+  article blockquote, article p {
+    overflow-wrap: break-word;
+  }
+
+  .container article img {
+    max-width: -webkit-fill-available;
+  }
+
+  /* https://amp.dev/documentation/components/amp-img/#maintaining-the-aspect-ratio-for-images-with-unknown-dimensions */
+
+  .fixed-height-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+  }
+
+  amp-img.contain img {
+    object-fit: contain;
+  }
+
+  /* .scrollToTop */
+
+  :root {
+    --color-primary: #005AF0;
+    --color-secondary: #00DCC0;
+    --color-text-light: #fff;
+    --space-2: 1rem;
+    /* 16px */
+    --box-shadow-1: 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 1px -1px rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+  }
+
+  .scrollToTop {
+    color: var(--color-text-light);
+    font-size: 1.4em;
+    box-shadow: var(--box-shadow-1);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    background: var(--color-primary);
+    z-index: 9999;
+    bottom: var(--space-2);
+    right: var(--space-2);
+    position: fixed;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .spacer {
+    width: 100vw;
+    max-width: 700px;
+    height: 200vh;
+    background-color: var(--color-secondary);
+  }
+
+  /* we move the anchor down to componsate the fixed header */
+
+  .target {
+    position: relative;
+  }
+
+  .target-anchor {
+    position: absolute;
+    top: -72px;
+    left: 0;
+  }
+
+  #post-tags ul, #post-categories ul {
+    padding-left: 0.5rem;
+    margin: 0px;
+  }
+
+  #post-tags ul li, #post-categories ul li {
+    display: inline;
+    margin-right: 0.5rem;
+  }
+
+  #post-categories ul li.category-item {
+    font-size: x-small;
+    text-transform: uppercase;
+  }
+
+  #post-tags ul li.tag-item {
+    background-color: greenyellow;
+    font-size: small;
+  }

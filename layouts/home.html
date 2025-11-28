@@ -1,12 +1,53 @@
 {{ define "main" }}
   <div id="react-home-root"></div>
-  {{ .Content }}
-  {{ range site.RegularPages }}
-    <section>
-      <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
-      {{ .Summary }}
-    </section>
 
-  {{ end }}
-  <script type="module" src="/react/home.bundle.js"></script>
+<main id="content" role="main">
+  <div class="container">
+
+    <div class="page-list">
+      {{ $pages := $.RegularPages }}
+      {{ if .IsHome }}{{ $pages = where $.Site.RegularPages "Type" "posts" }}{{ end }}
+      {{ $paginator := .Paginate $pages}}
+
+      <!-- Leave blank page messages -->
+      {{ if (eq $paginator.TotalPages 0) }}
+      <h1>Seems it's a blank page...</h1>
+      {{ end }}
+
+      {{ range $paginator.Pages }}
+      <div class="card">
+        <article>
+          <h4 class="title"><a href="{{ .Permalink }}">{{ .Title | truncate 24 }}</a></h4>
+          <div class="metadata">
+            <span>{{ .Date.Format "January 1, 2020" }}</span>
+            {{with .Params.lang}}
+            &Tab;<span>[{{.}}]</span>
+            {{end}}
+          </div>
+          <div class="description">
+            <p>
+              <em>{{ .Summary | plainify | truncate 120 }}</em>
+              &nbsp;<span><a href="{{ .Permalink }}">Read More>></a></span>
+            </p>
+          </div>
+        </article>
+        <div class="thumbnail">
+          <a href="{{ .Permalink }}">
+            <amp-img src="{{ .Params.image | default .Site.Data.default.HeaderBackgroundImage | absURL }}" width="80"
+              height="80" layout="fixed">
+            </amp-img>
+          </a>
+        </div>
+      </div>
+      {{ end }}
+    </div>
+
+    <div class="pagination">
+      {{ template "_internal/pagination.html" . }}
+    </div>
+
+  </div>
+</main>
+
+<script type="module" src="/react/home.bundle.js"></script>
 {{ end }}

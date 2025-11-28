@@ -14,6 +14,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         // 定义不同页面的入口
+        base: resolve(__dirname, 'src/pages/base.tsx'),
         home: resolve(__dirname, 'src/pages/home.tsx'),
         page: resolve(__dirname, 'src/pages/page.tsx'),
         list: resolve(__dirname, 'src/pages/list.tsx'),

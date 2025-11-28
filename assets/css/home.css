@@ -1,0 +1,56 @@
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0px;
+  padding-top: 1px;
+}
+
+.card {
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  border-radius: 5px;
+  max-height: 150px;
+  min-height: 120px;
+  padding-left: 0.7rem;
+  margin-top: 16px;
+}
+
+.card article .description {
+  padding-top: 0.5rem;
+  font-size: smaller;
+  max-width: 99%;
+  padding-bottom: 0.5rem;
+}
+
+.card {
+  display: flex;
+}
+
+.card article {
+  padding-top: 0.5rem;
+  display: block;
+}
+
+.card .thumbnail {
+  flex: 1;
+  padding-right: 1rem;
+  padding-top: 1rem;
+  justify-content: flex-end;
+}
+
+.card .thumbnail amp-img {
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  border-radius: 5px;
+}
+
+.container .pagination {
+  margin-top: 2rem;
+  margin-right: 1rem;
+  text-align: right;
+}
+
+.container .pagination ul li {
+  display: inline-block;
+  padding-right: 0.7rem;
+}
