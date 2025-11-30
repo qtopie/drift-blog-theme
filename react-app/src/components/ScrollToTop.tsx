@@ -1,3 +1,4 @@
+import { Button } from "@fluentui/react-components";
 import { useEffect, useState, useRef } from "react";
 
 // React implementation of AMP's scroll-to-top button behavior.
@@ -64,9 +65,9 @@ export default function ScrollToTop({
 	const className = `scrollToTop` + (animating ? ` anim-${animating}` : "");
 
 	return (
-		<button id={id} className={className} style={style} onClick={scrollToTop} aria-label="Scroll to Top">
+		<Button id={id} className={className} style={style} onClick={scrollToTop} aria-label="Scroll to Top">
 			^
-		</button>
+		</Button>
 	);
 }
 

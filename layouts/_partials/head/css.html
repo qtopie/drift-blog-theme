@@ -8,11 +8,8 @@
   {{- end }}
 {{- end }}
 
-{{/* Page-specific CSS by kind/section */}}
-{{- $kind := .Kind -}}
-{{- $section := .Section -}}
-
-{{- if eq $kind "home" -}}
+{{/* Page-specific CSS using Hugo boolean helpers */}}
+{{- if .IsHome -}}
   {{- with resources.Get "css/home.css" -}}
     {{- if hugo.IsDevelopment -}}
       <link rel="stylesheet" href="{{ .RelPermalink }}">
@@ -22,7 +19,7 @@
       {{- end -}}
     {{- end -}}
   {{- end -}}
-{{- else if or (eq $kind "page") (eq $section "posts") -}}
+{{- else if or .IsPage (eq .Section "posts") -}}
   {{- with resources.Get "css/page.css" -}}
     {{- if hugo.IsDevelopment -}}
       <link rel="stylesheet" href="{{ .RelPermalink }}">
@@ -32,8 +29,18 @@
       {{- end -}}
     {{- end -}}
   {{- end -}}
-{{- else if or (eq $kind "taxonomy") (eq $kind "term") -}}
+{{- else if or (eq .Kind "taxonomy") (eq .Kind "term") -}}
   {{- with resources.Get "css/taxonomy.css" -}}
+    {{- if hugo.IsDevelopment -}}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{- else -}}
+      {{- with . | minify | fingerprint -}}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- else if .IsSection -}}
+  {{- with resources.Get "css/section.css" -}}
     {{- if hugo.IsDevelopment -}}
       <link rel="stylesheet" href="{{ .RelPermalink }}">
     {{- else -}}
