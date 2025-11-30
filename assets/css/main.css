@@ -1,4 +1,4 @@
- html {
+html {
    font-family: sans-serif;
    line-height: 1.15;
    -ms-text-size-adjust: 100%;
@@ -41,6 +41,44 @@
   position: fixed;
   opacity: 0;
   visibility: hidden;
+}
+
+/* --- Global Search Styles --- */
+.search-root { margin-top: 0.5rem; }
+.search-box { position: relative; max-width: 420px; }
+.search-box.expanded { max-width: 420px; }
+.search-input-wrap { position: relative; display: flex; align-items: center; gap: 8px; }
+.search-box input { width:100%; box-sizing: border-box; }
+.search-icon { color: var(--color-text-muted); }
+.search-card { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 60; }
+.search-results { list-style:none; margin: 0; padding: 8px; max-height: 360px; overflow: auto; }
+.search-results li { margin:0 0 6px; }
+.search-results a { display:flex; justify-content:space-between; gap: 12px; font-weight:600; text-decoration:none; color: var(--color-text); }
+.search-results a:hover { text-decoration:underline; }
+.search-meta { color:#666; font-size:12px; }
+.search-empty { padding:8px; font-size:12px; color:#666; }
+
+@media (max-width: 600px) {
+  .search-box { max-width: 100%; }
+  .search-box.expanded { max-width: 100%; }
+  .search-root { flex: 1 1 auto; }
+}
+
+/* Header layout with responsive nav */
+header nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+}
+header nav h1 { margin: 0; font-size: 1.25rem; }
+header nav a { text-decoration: none; color: var(--color-text); }
+/* Reserve fixed space for search to prevent layout shift */
+.search-root { flex: 0 0 420px; }
+@media (min-width: 768px) {
+  header nav h1 { font-size: 1.5rem; }
+  .search-box { max-width: 420px; }
 }
 
  #home a {
@@ -91,6 +129,10 @@
  a:hover {
    outline-width: 0
  }
+
+/* Remove underline from site title link in header */
+header a { text-decoration: none; }
+header a:hover { text-decoration: none; }
 
  abbr[title] {
    border-bottom: none;
@@ -2126,3 +2168,27 @@
    margin-bottom: 1rem;
    padding-right: 0.5rem;
  }
+
+/* Sticky footer layout */
+html, body {
+  height: 100%;
+}
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+/* If footer element or ampstart footer wrapper exists, push it to bottom */
+footer, .ampstart-footer {
+  margin-top: auto;
+  width: 100%;
+}
+
+/* Center copyright text */
+.copyright {
+  text-align: center;
+  padding: var(--space-2) 0;
+}
+.copyright small {
+  display: block;
+}

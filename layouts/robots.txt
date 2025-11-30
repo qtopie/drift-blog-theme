@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /about/
+Disallow: /terms/
+Disallow: /posts/index.html
+
+{{- range $taxonomyname, $taxonomy := .Site.Taxonomies }}
+Disallow: /{{ $taxonomyname }}/
+{{- end }}
+
+Sitemap: {{ .Site.BaseURL }}sitemap.xml

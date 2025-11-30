@@ -1,4 +1,4 @@
-main {
+  main {
     max-width: 800px;
     margin: 0 auto;
     padding-top: 0.5rem;
@@ -188,20 +188,6 @@ main {
     font-size: 0.85rem;
   }
 
-  /* Horizontal taxonomy (categories + tags) */
-  .metadata .taxonomy {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1.25rem;
-    margin-top: 0.75rem;
-  }
-  .metadata .taxonomy > span { display: flex; align-items: center; }
-  .metadata .taxonomy ul { display: flex; flex-wrap: wrap; align-items: center; padding-left: 0; margin: 0; }
-  .metadata .taxonomy ul li { list-style: none; }
-  .metadata #post-categories ul li.category-item { margin-right: 0.5rem; }
-  .metadata #post-tags ul li.tag-item { margin-right: 0.5rem; }
-
   /* --- Responsive two-column layout: article + sidebar --- */
   @media (min-width: 768px) {
     main {
@@ -210,20 +196,19 @@ main {
       gap: 2rem;
       align-items: start;
     }
-    /* Ensure both occupy the same first row to avoid top gap */
-    article { grid-column: 1; grid-row: 1; }
-    .sidebar { grid-column: 2; grid-row: 1; }
+    article { grid-column: 1; }
+    .sidebar { grid-column: 2; }
 
     /* Keep TOC visible while scrolling */
     .sidebar .toc {
       position: sticky;
-      top: 96px; /* 根据你的头部高度调整 */
+      top: 100px;
       max-height: calc(100vh - 120px);
       overflow: auto;
-      padding: 12px 10px;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      background: #fff;
+      padding: 0.75rem;
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: var(--radius-2, 8px);
+      background: var(--color-bg, #fff);
     }
 
     .sidebar .toc h2 {
@@ -329,37 +314,9 @@ main {
     text-decoration: underline;
   }
 
-  /* 平滑滚动 */
-html {
-  scroll-behavior: smooth;
-}
-
-/* 让标题与顶部留出空间，避免被顶栏遮挡 */
-article h1, article h2, article h3, article h4, article h5, article h6 {
-  scroll-margin-top: 96px; /* 与 .toc 的 top 保持一致或略大 */
-}
-
-/* TOC 样式与高亮 */
-#TableOfContents ul {
-  list-style: none;
-  margin: 0;
-  padding-left: 0;
-}
-#TableOfContents li {
-  margin: 4px 0;
-}
-#TableOfContents a {
-  display: inline-block;
-  padding: 2px 4px;
-  border-radius: 4px;
-  color: #374151;
-  text-decoration: none;
-}
-#TableOfContents a:hover {
-  background: #f3f4f6;
-}
-#TableOfContents a.is-active {
-  background: #eef2ff;
-  color: #1f2937;
-  font-weight: 600;
-}
+  article .metadata {
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-4);
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }

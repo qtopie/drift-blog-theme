@@ -37,12 +37,10 @@ export const C60 = ({ containerSelector }: C60Props) => {
     };
 
     // Generate vertices
-    let vertices = initialVertices.reduce((acc: number[][], val, index, array) => {
-      if (index % 3 === 0) {
-        acc.push(array.slice(index, index + 3) as number[]);
-      }
-      return acc;
-    }, []);
+    let vertices: number[][] = [];
+    for (let i = 0; i < initialVertices.length; i += 3) {
+      vertices.push(initialVertices.slice(i, i + 3) as number[]);
+    }
 
     const newVertices: number[][] = [];
 

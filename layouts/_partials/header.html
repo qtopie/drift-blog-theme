@@ -1,2 +1,7 @@
-<h1>{{ site.Title }}</h1>
-{{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+<nav>
+  <a href="/">
+    <h1>{{ site.Title }}</h1>
+  </a>
+  
+  <div id="react-search" class="search-root" aria-label="Site Search"></div>
+</nav>

@@ -1,0 +1,15 @@
+{{- /* Build a lightweight search index */ -}}
+{{- $pages := where .Site.RegularPages "Draft" "ne" true -}}
+{{- $list := slice -}}
+{{- range $p := $pages -}}
+  {{- $list = $list | append (dict
+    "title" $p.Title
+    "summary" ($p.Summary | plainify)
+    "content" (trim ($p.Plain | truncate 600) "\n")
+    "permalink" $p.Permalink
+    "date" ($p.Date.Format "2006-01-02")
+    "tags" $p.Params.tags
+    "categories" $p.Params.categories
+  ) -}}
+{{- end -}}
+{{- $list | jsonify -}}
