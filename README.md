@@ -15,3 +15,16 @@
 Bash
 
 cd react-app && npm install && npm run build && cd .. && hugo --minify
+
+Guitar 简谱渲染（jTab）:
+
+- 在 Markdown 中使用代码块，语言标记为 `guitar`。
+- 例如：
+
+	```guitar
+	E / / / | Am / B7 / ||
+	$2 0 1 3 $1 0 1 3/5
+	```
+
+- 构建后，React 前端会扫描页面并将这些代码块转换为 jTab 图形。
+- jTab 语法支持和示例详见 https://jtab.tardate.com/。

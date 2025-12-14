@@ -7,3 +7,28 @@
   <small>{{.| safeHTML}}</small>
   {{ end }}
 </div>
+
+<!-- lazy init scripts -->
+<div>
+    <script type="module" src="/react/base.bundle.js"></script>
+    {{/* 仅当页面包含 guitar 代码块时，才注入 jTab 依赖并渲染 */}}
+    {{- $hasGuitar := gt (len (findRE "language-guitar" .Content)) 0 -}}
+    {{- if $hasGuitar -}}
+    {{- with resources.Get "js/guitar.js" }}
+    {{- $opts := dict
+    "minify" (not hugo.IsDevelopment)
+    "sourceMap" (cond hugo.IsDevelopment "external" "")
+    "targetPath" "js/guitar.js"
+    }}
+    {{- with . | js.Build $opts }}
+    {{- if hugo.IsDevelopment }}
+    <script src="{{ .RelPermalink }}" defer></script>
+    {{- else }}
+    {{- with . | fingerprint }}
+    <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- end -}}
+</div>
