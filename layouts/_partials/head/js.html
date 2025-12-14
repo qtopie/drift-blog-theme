@@ -3,6 +3,11 @@
 {{- if $hasGuitar -}}
 <!-- jTab helper CSS to preset container heights and reduce layout jitter -->
 <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jtab@1.3.2/css/jtab-helper.min.css" />
+<style>
+	/* Slightly shrink rendered tabs to fit better in content flow */
+	.jtab svg { transform: scale(0.8); transform-origin: top left; }
+	.jtab { display: inline-block; }
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" type="text/javascript" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js" type="text/javascript" defer></script>
 <script src="https://jtab.tardate.com/javascripts/jtab.js" type="text/javascript" defer></script>
