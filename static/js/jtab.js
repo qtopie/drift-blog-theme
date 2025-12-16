@@ -436,6 +436,41 @@ function jtabChord (token) {
   }
 }
 
+// tweaked: draw strum up (^) and down (v) markers
+Raphael.fn.strum_up = function () {
+  var width = this.tab_char_width * 2;
+  if (this.has_tab) {
+    this.tab_extend(width);
+    // place marker around middle strings
+    this.text(this.current_offset + this.tab_char_width,
+              this.tab_top + this.tab_spacing * 3.5,
+              '↑').attr({stroke: this.tab_text_color, "font-size":"20px"});
+    this.increment_offset(width);
+  } else if (this.has_chord) {
+    // draw near chord area
+    this.text(this.current_offset + this.margin_left,
+              this.margin_top + (this.fret_spacing * 0.5),
+              '↑').attr({stroke: this.tab_text_color, "font-size":"20px"});
+    this.increment_offset(this.margin_left + this.margin_right);
+  }
+}
+
+Raphael.fn.strum_down = function () {
+  var width = this.tab_char_width * 2;
+  if (this.has_tab) {
+    this.tab_extend(width);
+    this.text(this.current_offset + this.tab_char_width,
+              this.tab_top + this.tab_spacing * 3.5,
+              '↓').attr({stroke: this.tab_text_color, "font-size":"20px"});
+    this.increment_offset(width);
+  } else if (this.has_chord) {
+    this.text(this.current_offset + this.margin_left,
+              this.margin_top + (this.fret_spacing * 0.5),
+              '↓').attr({stroke: this.tab_text_color, "font-size":"20px"});
+    this.increment_offset(this.margin_left + this.margin_right);
+  }
+}
+
 jtabChord.prototype.setCustomChordArray = function(){
   this.chordArray = new Array();
   this.chordArray = this.parseCustomChordArrayFromToken();
@@ -881,6 +916,10 @@ Raphael.fn.render_token = function (token) {
       this.bar();
     } else if (token == "||" ) {
       this.doublebar();
+    } else if (token == "^") {
+      this.strum_up();
+    } else if (token == "v") {
+      this.strum_down();
     } else if ( this.has_tab ) {
       this.tab_note( token );
     }

@@ -1,48 +1,64 @@
 (function () {
-  // 查找已渲染的 Markdown 代码块：<code class="language-guitar" data-lang="guitar">...</code>
-  var guitarCodes = Array.from(document.querySelectorAll('pre > code.language-guitar, code.language-guitar'));
-  if (guitarCodes.length === 0) return;
+  function whenReady(checkFn, cb, opts) {
+    opts = opts || {};
+    var interval = opts.interval || 50;
+    var timeout = opts.timeout || 5000;
+    var start = Date.now();
+    (function poll() {
+      try {
+        if (checkFn()) return cb();
+      } catch (e) { /* ignore */ }
+      if (Date.now() - start > timeout) {
+        console.warn('[jtab] whenReady timeout');
+        return;
+      }
+      setTimeout(poll, interval);
+    })();
+  }
 
-  // 显式渲染：在每个代码块后插入容器，并调用 jtab.render($(container), phrase)
-  guitarCodes.forEach(function (codeEl, idx) {
-    var raw = codeEl.textContent || '';
-    var normalized = raw
-      .replace(/\r\n/g, '\n')        // 统一行尾
-      .replace(/<br\s*\/?>/gi, '\n') // 将 <br> 转换为换行
-      .replace(/[ \t]+$/gm, '');       // 去掉每行尾部多余空格
-    if (!normalized.trim()) return;
+  function libsReady() {
+    return (typeof window.jQuery !== 'undefined') &&
+           (typeof window.Raphael !== 'undefined') &&
+           (typeof window.jtab !== 'undefined');
+  }
 
-    // 根据 jTab 语法，将内容按 "stave ... end" 片段进行拆分
-    // 每个片段代表一段独立的乐谱，逐段渲染以达到换行效果。
-    var segments = [];
-    var regex = /stave[\s\S]*?end\s*;?/gi; // 最小匹配直到 end（可选分号）
-    var match;
-    while ((match = regex.exec(normalized)) !== null) {
-      var seg = (match[0] || '').trim();
-      if (seg) segments.push(seg);
-    }
-    // 如果没有明确的 stave/end 结构，则退化为按空行拆分
-    if (segments.length === 0) {
-      segments = normalized.split(/\n\s*\n+/).map(function (s) { return s.trim(); }).filter(Boolean);
-    }
+  function runRenderer() {
+    var guitarCodes = Array.from(document.querySelectorAll('pre > code.language-guitar, code.language-guitar'));
+    if (guitarCodes.length === 0) return;
 
-    var parent = codeEl.parentElement;
-    var anchor = parent && parent.tagName.toLowerCase() === 'pre' ? parent : codeEl;
-    // 隐藏原始代码块
-    anchor.style.display = 'none';
+    guitarCodes.forEach(function (codeEl, idx) {
+      var raw = codeEl.textContent || '';
+      // 若你按段拆分/转义 <br>，在此处理 raw
+      var parent = codeEl.parentElement;
+      var anchor = parent && parent.tagName.toLowerCase() === 'pre' ? parent : codeEl;
+      // 隐藏原始代码（可选）
+      anchor.style.display = 'none';
 
-    // 为每个片段创建并渲染一个 jtab 容器，保持顺序
-    var insertionPoint = anchor;
-    segments.forEach(function (notation, sIdx) {
+      // 如果整块直接交给 jtab 也可以：
       var container = document.createElement('div');
       container.className = 'jtab';
-      container.id = 'jtab-container-' + idx + '-' + sIdx;
-      insertionPoint.insertAdjacentElement('afterend', container);
-      insertionPoint = container;
+      container.id = 'jtab-container-' + idx;
+      anchor.insertAdjacentElement('afterend', container);
 
-      if (window.jtab && typeof window.jtab.render === 'function' && window.jQuery) {
-        window.jtab.render(window.jQuery(container), notation);
+      try {
+        window.jtab.render(window.jQuery(container), raw);
+      } catch (err) {
+        console.error('[jtab] render error at idx', idx, err);
       }
     });
+  }
+
+  // Ensure DOM parsed before trying to find code blocks
+  function onDomReady(cb) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', cb);
+    } else {
+      cb();
+    }
+  }
+
+  onDomReady(function () {
+    // Wait for libraries to be available, then run renderer.
+    whenReady(libsReady, runRenderer, { interval: 50, timeout: 5000 });
   });
 })();
