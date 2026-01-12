@@ -9,7 +9,7 @@
 {{- end }}
 
 {{/* Page-specific CSS using Hugo boolean helpers */}}
-{{- if .IsHome -}}
+{{- if or .IsHome (eq .Section "posts") (eq .Section "notes") -}}
   {{- with resources.Get "css/home.css" -}}
     {{- if hugo.IsDevelopment -}}
       <link rel="stylesheet" href="{{ .RelPermalink }}">
@@ -19,7 +19,7 @@
       {{- end -}}
     {{- end -}}
   {{- end -}}
-{{- else if or .IsPage (eq .Section "posts") -}}
+{{- else if or .IsPage -}}
   {{- with resources.Get "css/page.css" -}}
     {{- if hugo.IsDevelopment -}}
       <link rel="stylesheet" href="{{ .RelPermalink }}">
