@@ -86,16 +86,19 @@ export const SearchBox: React.FC = () => {
   return (
     <div className={`search-box${open ? ' expanded' : ''}`}>
       <div className="search-input-wrap">
-        <SearchRegular className="search-icon" />
         <Input
-          size="small"
+          className="search-input"
+          size="medium"
+          appearance="filled-darker"
+          contentBefore={<SearchRegular className="search-icon" />}
+          contentAfter={loading ? <Spinner size="tiny" /> : undefined}
+          aria-label="Search"
           placeholder="Search articles..."
           value={q}
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
           onChange={(_,data) => setQ(data.value)}
         />
-        {loading && <Spinner size="tiny" />}    
       </div>
 
       {open && q && results.length > 0 && (

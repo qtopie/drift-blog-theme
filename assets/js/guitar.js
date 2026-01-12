@@ -27,24 +27,39 @@
     if (guitarCodes.length === 0) return;
 
     guitarCodes.forEach(function (codeEl, idx) {
-      var raw = codeEl.textContent || '';
-      // 若你按段拆分/转义 <br>，在此处理 raw
+      // normalize text: keep newlines, support <br>
+      var raw = (codeEl.textContent || '')
+        .replace(/\r\n?/g, '\n')
+        .replace(/<br\s*\/?>/gi, '\n');
+
       var parent = codeEl.parentElement;
       var anchor = parent && parent.tagName.toLowerCase() === 'pre' ? parent : codeEl;
-      // 隐藏原始代码（可选）
       anchor.style.display = 'none';
 
-      // 如果整块直接交给 jtab 也可以：
-      var container = document.createElement('div');
-      container.className = 'jtab';
-      container.id = 'jtab-container-' + idx;
-      anchor.insertAdjacentElement('afterend', container);
-
-      try {
-        window.jtab.render(window.jQuery(container), raw);
-      } catch (err) {
-        console.error('[jtab] render error at idx', idx, err);
+      // segment by explicit stave...end; blocks, fallback to blank lines
+      var segments = [];
+      var matches = raw.match(/stave[\s\S]*?end\s*;?/gi);
+      if (matches && matches.length) {
+        segments = matches;
+      } else {
+        segments = raw.split(/\n\s*\n+/).filter(function (s) { return s.trim().length > 0; });
       }
+
+      var insertionPoint = anchor;
+
+      segments.forEach(function (segment, segIdx) {
+        var container = document.createElement('div');
+        container.className = 'jtab';
+        container.id = 'jtab-container-' + idx + '-' + segIdx;
+        insertionPoint.insertAdjacentElement('afterend', container);
+        insertionPoint = container;
+
+        try {
+          window.jtab.render(window.jQuery(container), segment.trim());
+        } catch (err) {
+          console.error('[jtab] render error at idx', idx, 'segment', segIdx, err);
+        }
+      });
     });
   }
 

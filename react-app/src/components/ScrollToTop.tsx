@@ -1,7 +1,8 @@
 import { Button } from "@fluentui/react-components";
+import { ArrowUp24Regular } from "@fluentui/react-icons";
 import { useEffect, useState, useRef } from "react";
 
-// React implementation of AMP's scroll-to-top button behavior.
+// React implementation of scroll-to-top button behavior.
 // Shows the button after scrolling down, hides near the top, and
 // animates opacity/visibility over ~200ms. Clicking smoothly scrolls to top.
 export default function ScrollToTop({
@@ -59,15 +60,25 @@ export default function ScrollToTop({
 		transition: `opacity ${durationMs}ms ease, visibility ${durationMs}ms step-end`,
 		opacity: visible ? 1 : 0,
 		visibility: visible ? "visible" : "hidden",
+		// Prevent intercepting clicks when hidden (mobile layout safety)
+		pointerEvents: visible ? "auto" : "none",
 	};
 
 	// Optional animation state hooks (could be used to add classNames if needed)
 	const className = `scrollToTop` + (animating ? ` anim-${animating}` : "");
 
 	return (
-		<Button id={id} className={className} style={style} onClick={scrollToTop} aria-label="Scroll to Top">
-			^
-		</Button>
+		<Button
+			id={id}
+			className={className}
+			style={style}
+			onClick={scrollToTop}
+			aria-label="Scroll to Top"
+			shape="circular"
+			appearance="primary"
+			size="large"
+			icon={<ArrowUp24Regular />}
+		/>
 	);
 }
 
