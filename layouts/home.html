@@ -19,14 +19,11 @@
         <article>
           <h4 class="title"><a href="{{ .Permalink }}">{{ .Title | truncate 24 }}</a></h4>
           <div class="metadata">
-            <span>{{ .Date.Format "2006-01-02" }}</span>
-            {{with .Params.lang}}
-            &Tab;<span>[{{.}}]</span>
-            {{end}}
+            <span class="date">{{ .Date.Format "2006-01-02" }}</span>
           </div>
           <div class="description">
             <p>
-              <em>{{ .Summary | plainify | truncate 120 }}</em>
+              <em>{{ .Summary | plainify | truncate 90 }}</em>
               &nbsp;<span><a href="{{ .Permalink }}">Read More>></a></span>
             </p>
           </div>
