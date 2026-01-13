@@ -17,7 +17,7 @@
         <article>
           <h4 class="title"><a href="{{ .Permalink }}">{{ .Title | truncate 24 }}</a></h4>
           <div class="metadata">
-            <span>{{ .Date.Format "January 2, 2006" }}</span>
+            <span>{{ .Date.Format "2006-01-02" }}</span>
             {{with .Params.lang}}
             &Tab;<span>[{{.}}]</span>
             {{end}}
