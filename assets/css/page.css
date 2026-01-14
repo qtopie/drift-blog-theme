@@ -264,26 +264,31 @@ amp-img.contain img {
 @media (min-width: 1024px) {
   main {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 250px; /* content + fixed TOC width */
-    gap: 2rem;
+    /* 3-column layout: Spacer(Left) | Content | Sidebar */
+    /* This pushes the article toward the center to balance the right sidebar */
+    grid-template-columns: 160px minmax(0, 1fr) 250px;
+    gap: 4rem; 
     align-items: start;
+    max-width: 1350px; /* Increased to accommodate left spacer */
   }
 
-  /* Ensure both occupy the same first row to avoid top gap */
+  /* Ensure both occupy the same first row */
   article {
-    grid-column: 1;
+    grid-column: 2; /* Moved to center column */
     grid-row: 1;
   }
 
   .sidebar {
-    grid-column: 2;
+    grid-column: 3; /* Moved to right column */
     grid-row: 1;
+    /* Push the starting position of TOC down to be below the title region */
+    margin-top: 140px; 
   }
 
   /* Keep TOC visible while scrolling */
   .sidebar .toc {
     position: sticky;
-    top: 20px; /* per request */
+    top: 20px; 
     max-height: 90vh;
     overflow: auto;
     padding: 12px 10px;
@@ -297,6 +302,40 @@ amp-img.contain img {
     font-size: 1rem;
     margin: 0 0 0.5rem 0;
     color: var(--color-text-muted);
+  }
+
+  /* Align Header Nav with Main Grid specifically for PC pages */
+  header nav {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr) 250px;
+    gap: 4rem;
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 0.5rem 0; /* Removing side padding to align exactly with grid edges */
+    align-items: center;
+  }
+  
+  /* Reset flex properties from main.css */
+  header nav .search-root {
+    width: 100%;
+    flex: unset;
+    margin-top: 0; /* Reset global margin if any */
+  }
+
+  header nav .search-box {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Reset items placement for Nav */
+  header nav > a { /* The Logo/Home Link */
+    grid-column: 2;
+    justify-self: start;
+    padding-left: 0.5rem; /* Match article padding */
+  }
+
+  header nav .search-root {
+    grid-column: 3;
   }
 }
 
@@ -580,7 +619,32 @@ pre:hover .copy-code-button {
   background: #444;
 }
 
-/* Ensure pre has relative positioning for the absolute button */
+/* Code Block Styling Fixes */
 article pre {
-  position: relative;
+  background-color: #f6f8fa; /* GitHub-like light gray background */
+  padding: 16px;
+  border-radius: 6px;
+  overflow: auto;
+  line-height: 1.45;
+  /* Ensure text wrapping */
+  white-space: pre-wrap;
+  word-break: break-all;
+  position: relative; /* For copy button positioning */
+}
+
+/* Ensure code inside pre inherits wrapper style */
+article pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  font-size: 85%;
+}
+
+/* Inline code styling */
+article :not(pre) > code {
+  background-color: rgba(175, 184, 193, 0.2);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  font-size: 85%;
 }

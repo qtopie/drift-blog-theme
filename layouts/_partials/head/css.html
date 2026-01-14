@@ -29,6 +29,11 @@
       {{- end -}}
     {{- end -}}
   {{- end -}}
+  {{- $syntax := resources.Get "css/syntax.css" -}}
+  {{- if $syntax -}}
+    {{- $syntax = $syntax | minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $syntax.RelPermalink }}">
+  {{- end -}}
 {{- else if or (eq .Kind "taxonomy") (eq .Kind "term") -}}
   {{- with resources.Get "css/taxonomy.css" -}}
     {{- if hugo.IsDevelopment -}}
@@ -50,3 +55,6 @@
     {{- end -}}
   {{- end -}}
 {{- end -}}
+
+{{/* KaTeX CSS (Cloudflare CDN) */}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />

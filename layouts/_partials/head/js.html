@@ -42,3 +42,28 @@
 	{{- end -}}
 {{- end -}}
 
+{{/* KaTeX JS & Auto-render (Cloudflare CDN) */}}
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous" referrerpolicy="no-referrer" onload="renderMathInElement(document.body, {
+  delimiters: [
+    {left: '$$', right: '$$', display: true},
+    {left: '$', right: '$', display: false},
+    {left: '\\(', right: '\\)', display: false},
+    {left: '\\[', right: '\\]', display: true}
+  ],
+  throwOnError : false
+});"></script>
+
+{{/* Block-level Latex Block Rendering Support */}}
+{{- if .IsPage -}}
+	{{- with resources.Get "js/katex-block.js" -}}
+		{{- if hugo.IsDevelopment -}}
+			<script src="{{ .RelPermalink }}" defer></script>
+		{{- else -}}
+			{{- with . | minify | fingerprint -}}
+				<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+			{{- end -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+
