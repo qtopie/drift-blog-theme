@@ -59,3 +59,36 @@ main {
   display: inline-block;
   padding-right: 0.7rem;
 }
+
+/* Mobile adjustments: edge-to-edge layout and C60 sizing */
+@media (max-width: 600px) {
+  main {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .page-list {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .card {
+    border-radius: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .card .thumbnail {
+    padding-right: 0.5rem;
+  }
+
+  /* Lower the C60 sphere height on small screens */
+  .three-container {
+    height: 260px;
+  }
+}
