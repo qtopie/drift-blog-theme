@@ -1,5 +1,5 @@
 main {
-  max-width: 800px;
+  max-width: 1120px; /* widen to fit right TOC on desktop */
   margin: 0 auto;
   padding-top: 0.5rem;
 }
@@ -121,27 +121,37 @@ article.text-content {
 }
 
 article h1 {
-  border-bottom: 1px solid #CCC;
-  padding-bottom: 3px;
-  margin-bottom: 1rem;
+  margin: 2.5rem 0 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-h2::before {
-  content: ' ';
-  margin-top: 3rem;
-  display: inline-block;
+article h2 {
+  margin: 2rem 0 0.9rem;
 }
 
-h3::before {
-  content: ' ';
-  margin-top: 2rem;
-  display: inline-block;
+article h3 {
+  margin: 1.6rem 0 0.75rem;
 }
 
-h4::before {
-  content: ' ';
-  margin-top: 1rem;
-  display: inline-block;
+article h4 {
+  margin: 1.25rem 0 0.6rem;
+}
+
+article h5 {
+  margin: 1rem 0 0.5rem;
+}
+
+.heading-number {
+  margin-right: 0.35rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.heading-number {
+  margin-right: 0.35rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 article pre {
@@ -251,10 +261,10 @@ amp-img.contain img {
 }
 
 /* --- Responsive two-column layout: article + sidebar --- */
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   main {
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: minmax(0, 1fr) 250px; /* content + fixed TOC width */
     gap: 2rem;
     align-items: start;
   }
@@ -273,14 +283,14 @@ amp-img.contain img {
   /* Keep TOC visible while scrolling */
   .sidebar .toc {
     position: sticky;
-    top: 96px;
-    /* 根据你的头部高度调整 */
-    max-height: calc(100vh - 120px);
+    top: 20px; /* per request */
+    max-height: 90vh;
     overflow: auto;
     padding: 12px 10px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     background: #fff;
+    width: 250px;
   }
 
   .sidebar .toc h2 {
@@ -288,6 +298,15 @@ amp-img.contain img {
     margin: 0 0 0.5rem 0;
     color: var(--color-text-muted);
   }
+}
+
+/* Desktop/right sticky TOC container alias */
+.toc-container {
+  position: sticky;
+  top: 20px;
+  max-height: 90vh;
+  overflow-y: auto;
+  width: 250px;
 }
 
 /* --- TOC right layout --- */
@@ -320,99 +339,14 @@ amp-img.contain img {
 }
 
 /* Hugo renders .TableOfContents as <nav id="TableOfContents"><ul>... */
-#TableOfContents {
-  font-size: 0.95rem;
-}
+/* TOC styles moved to bottom of file */
+/* ... */
 
-/* Reset list styles */
-#TableOfContents ul {
-  list-style: none;
-  padding-left: 0.75rem;
-  margin: 0.25rem 0;
-  counter-reset: level1;
-}
-
-/* Top-level items */
-#TableOfContents>ul>li {
-  counter-increment: level1;
-  margin: 0.25rem 0;
-}
-
-#TableOfContents>ul>li>a::before {
-  content: counter(level1) ". ";
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
-}
-
-/* Second level */
-#TableOfContents ul ul {
-  counter-reset: level2;
-  margin-left: 0.5rem;
-}
-
-#TableOfContents ul ul>li {
-  counter-increment: level2;
-}
-
-#TableOfContents ul ul>li>a::before {
-  content: counter(level1) "." counter(level2) " ";
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
-}
-
-/* Third level */
 #TableOfContents ul ul ul {
-  counter-reset: level3;
-  margin-left: 0.5rem;
-}
-
-#TableOfContents ul ul ul>li {
-  counter-increment: level3;
-}
-
-#TableOfContents ul ul ul>li>a::before {
-  content: counter(level1) "." counter(level2) "." counter(level3) " ";
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
+  margin-left: 0.75rem;
 }
 
 /* Link styling */
-#TableOfContents a {
-  text-decoration: none;
-  color: var(--color-primary);
-}
-
-#TableOfContents a:hover {
-  text-decoration: underline;
-}
-
-/* 平滑滚动 */
-html {
-  scroll-behavior: smooth;
-}
-
-/* 让标题与顶部留出空间，避免被顶栏遮挡 */
-article h1,
-article h2,
-article h3,
-article h4,
-article h5,
-article h6 {
-  scroll-margin-top: 96px;
-  /* 与 .toc 的 top 保持一致或略大 */
-}
-
-/* TOC 样式与高亮 */
-#TableOfContents ul {
-  list-style: none;
-  margin: 0;
-  padding-left: 0;
-}
-
-#TableOfContents li {
-  margin: 4px 0;
-}
-
 #TableOfContents a {
   display: inline-block;
   padding: 2px 4px;
@@ -429,4 +363,224 @@ article h6 {
   background: #eef2ff;
   color: #1f2937;
   font-weight: 600;
+}
+
+/* --- Mobile Drawer TOC --- */
+.mobile-toc-trigger {
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  z-index: 1000;
+  display: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  color: #fff;
+  background: var(--color-primary);
+  box-shadow: var(--box-shadow-1);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 600px) {
+  .mobile-toc-trigger {
+    right: calc(8px + env(safe-area-inset-right, 0px));
+    bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    width: 44px;
+    height: 44px;
+  }
+}
+
+.mobile-toc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 999;
+  display: none;
+}
+
+.mobile-toc-drawer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  max-height: 85vh;
+  transform: translateY(100%);
+  transition: transform 200ms ease;
+  z-index: 1001;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.15);
+}
+
+.mobile-toc-drawer.open {
+  transform: translateY(0);
+}
+
+.mobile-toc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mobile-toc-close {
+  border: none;
+  background: transparent;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.mobile-toc-body {
+  padding: 8px 12px 16px;
+  overflow: auto;
+  max-height: calc(85vh - 56px);
+}
+
+.mobile-safe-area-spacer {
+  height: env(safe-area-inset-bottom, 0px);
+}
+
+/* Visibility rules */
+@media (max-width: 1024px) {
+  .sidebar { display: none; }
+  .mobile-toc-trigger { display: inline-flex; align-items: center; gap: 6px; }
+}
+
+@media (min-width: 1025px) {
+  .mobile-toc-drawer, .mobile-toc-overlay { display: none !important; }
+}
+
+/* 平滑滚动 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 目标标题闪烁效果 */
+@keyframes target-flash {
+  0% { background-color: rgba(0, 90, 240, 0.15); border-radius: 4px; }
+  100% { background-color: transparent; border-radius: 4px; }
+}
+
+.target-highlight {
+  animation: target-flash 1.5s ease-out;
+}
+
+/* 文章内容自动换行与代码块优化 */
+article {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+article pre,
+article code {
+  white-space: pre-wrap; /* 允许代码块内文字自动换行 */
+  word-break: break-all; /* 防止长单词溢出 */
+  max-width: 100%;
+}
+
+/* TOC 多级缩进与字体大小 */
+#TableOfContents ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+#TableOfContents li {
+  margin: 4px 0;
+}
+
+#TableOfContents a {
+  display: block;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+#TableOfContents a:hover,
+#TableOfContents a.is-active {
+  color: var(--color-primary);
+}
+
+/* H3 层级缩进 */
+#TableOfContents ul ul {
+  padding-left: 1.5rem; /* Increased from 1.2rem for distinct step */
+  margin-top: 4px;
+}
+
+#TableOfContents ul ul a {
+  font-size: 0.88rem;
+  color: #88909c; /* 略淡的颜色区分层级 */
+}
+
+/* H4/H5 deeper indentation recursively handled by ul ul rule (1.5rem + 1.5rem) */
+
+
+/* 移动端 TOC 样式适配 */
+.mobile-toc-body ul {
+  list-style: none;
+  padding-left: 0;
+}
+.mobile-toc-body ul ul {
+  padding-left: 1rem;
+}
+.mobile-toc-body a {
+  display: block;
+  padding: 6px 0;
+  font-size: 1rem;
+  color: var(--color-text);
+  text-decoration: none;
+}
+.mobile-toc-body ul ul a {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* 让标题与顶部留出空间，避免被顶栏遮挡 */
+article h1,
+article h2,
+article h3,
+article h4,
+article h5,
+article h6 {
+  scroll-margin-top: 96px;
+  /* 与 .toc 的 top 保持一致或略大 */
+}
+
+/* Code Block Copy Button */
+.copy-code-button {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  background: rgba(68, 68, 68, 0.7);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-family: inherit;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s;
+  z-index: 10;
+}
+
+pre:hover .copy-code-button {
+  opacity: 1;
+}
+
+.copy-code-button:hover {
+  background: #444;
+}
+
+/* Ensure pre has relative positioning for the absolute button */
+article pre {
+  position: relative;
 }

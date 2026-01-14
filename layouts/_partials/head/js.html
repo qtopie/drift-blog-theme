@@ -14,3 +14,31 @@
 <script src="{{ "js/jtab.js" | relURL }}" defer></script>
 {{- end -}}
 
+{{/* TOC interactions for pages that render a TableOfContents */}}
+{{- $tocHTML := .TableOfContents -}}
+{{- $hasTOC := gt (len (findRE "<li>" $tocHTML)) 0 -}}
+{{- if and .IsPage (or $hasTOC .Params.Toc) -}}
+	{{- with resources.Get "js/toc.js" -}}
+		{{- if hugo.IsDevelopment -}}
+			<script src="{{ .RelPermalink }}" type="module" defer></script>
+		{{- else -}}
+			{{- with . | minify | fingerprint -}}
+				<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" type="module" defer></script>
+			{{- end -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+
+{{/* Code Block Copy Feature */}}
+{{- if .IsPage -}}
+	{{- with resources.Get "js/copy-code.js" -}}
+		{{- if hugo.IsDevelopment -}}
+			<script src="{{ .RelPermalink }}" defer></script>
+		{{- else -}}
+			{{- with . | minify | fingerprint -}}
+				<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+			{{- end -}}
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
+
