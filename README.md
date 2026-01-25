@@ -46,3 +46,26 @@ Strum 扫弦标记:
 
 - 空行表示换行：相邻段会在新的一行渲染。
 - 如果使用 `stave ... end;` 包裹段落，则按分段渲染；如果没有匹配到，则回退为按空行切段。
+
+Mermaid 支持:
+
+- 方法: 本主题在 `layouts/_default/_markup/render-codeblock-mermaid.html` 中添加了一个渲染钩子，且提供 `layouts/shortcodes/mermaid.html` 短代码。两者都会设置页面标记以便在页脚按需加载 Mermaid。
+- 使用方式（推荐）: 在 Markdown 中直接使用标准代码块语法并指定语言 `mermaid`：
+
+		```mermaid
+		graph TD;
+			A-->B;
+		```
+
+	- 或者使用短代码：
+
+		{{"<"}}% raw %{{"%"}}  <!-- shortcodes in README rendered verbatim; use {{< mermaid >}} in content -->
+		{{"<"}}% endraw %{{"%"}}
+
+- 页面级控制: 渲染钩子会向页面注入一个标记 `hasMermaid`，页脚会使用 ESM `import()` 从 jsDelivr 按需加载 `mermaid`（ESM bundle），并初始化已有及后续动态插入的 `.mermaid` 区块。
+- React 集成: 主题的 React bundle 也包含了一个小工具 `react-app/src/utils/mermaid.ts`，它会在 React 启动时检测 `.mermaid` 区块并动态 import Mermaid（ESM），以便在使用 React 渲染/增强时也能正确初始化图表。
+
+注意:
+
+- 使用 CDN 的 ESM 包需要在生产网络环境下允许导入外部模块。
+- 如果站点有暗黑/浅色主题切换，Mermaid 初始化会尝试基于 `body` 的 class 或系统偏好选择 `dark` 或 `default` 主题。

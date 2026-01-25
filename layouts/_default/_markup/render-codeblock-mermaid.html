@@ -1,0 +1,5 @@
+{{- /* Mark this page as having mermaid so templates can conditionally load the script */ -}}
+{{ .Page.Store.Set "hasMermaid" true }}
+<div class="mermaid">
+  {{- .Inner | safeHTML -}}
+</div>
