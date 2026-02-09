@@ -5,6 +5,163 @@
   position: relative;
 }
 
+.c60-root {
+  background: radial-gradient(120% 90% at 50% 10%, rgba(255,255,255,0.2), rgba(255,255,255,0) 55%),
+    linear-gradient(180deg, rgba(30, 80, 40, 0.08), rgba(30, 80, 40, 0));
+  overflow: hidden;
+  position: relative;
+}
+
+.c60-prompt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-size: 24px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  z-index: 5;
+}
+
+.c60-fortune {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  visibility: hidden;
+}
+
+.c60-fortune--revealed {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto; /* Allow clicking the result if needed later */
+}
+
+.c60-curtain {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 50% 40%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7) 80%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(200, 50, 50, 0.05) 0px,
+      rgba(200, 50, 50, 0.05) 1px,
+      transparent 1px,
+      transparent 20px
+    );
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.c60-stick {
+  position: relative;
+  width: 110px;
+  height: 280px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #6f3e17 0%, #a8682f 35%, #b67a3a 50%, #8a4f21 65%, #6f3e17 100%);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.08);
+  transform: rotate(-2deg);
+}
+
+.c60-stick-top {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 72px;
+  height: 18px;
+  transform: translateX(-50%);
+  border-radius: 10px 10px 6px 6px;
+  background: linear-gradient(180deg, #d8b078, #b9874a);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
+}
+
+.c60-paper {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  width: 72px;
+  height: 210px;
+  transform: translateX(-50%);
+  border-radius: 10px;
+  border: 1px solid #e1c7a0;
+  background: linear-gradient(180deg, #fbf6ee, #f0e1c9),
+    repeating-linear-gradient(90deg, rgba(210,170,120,0.12) 0 1px, rgba(0,0,0,0) 1px 6px);
+  box-shadow: inset 0 0 16px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 10px;
+}
+
+.c60-paper-title,
+.c60-paper-footer {
+  font-family: "STKaiti", "Kaiti SC", "KaiTi", "Songti SC", "Noto Serif SC", serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #6a3f1c;
+}
+
+.c60-paper-text {
+  font-family: "STKaiti", "Kaiti SC", "KaiTi", "Songti SC", "Noto Serif SC", serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #2a1b12;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+
+.c60-paper-seal {
+  position: absolute;
+  bottom: 12px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #c2332f, #8c1b1b);
+  color: rgba(255,255,255,0.8);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+}
+
+.c60-stick-tassel {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  width: 10px;
+  height: 28px;
+  transform: translateX(-50%);
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, #d1413c, #7e1411);
+  box-shadow: 0 6px 10px rgba(0,0,0,0.2);
+}
+
+.c60-fortune--spinning .c60-stick {
+  animation: c60-shiver 0.08s ease-in-out infinite alternate;
+}
+
+.c60-fortune--revealed .c60-paper {
+  box-shadow: inset 0 0 16px rgba(0,0,0,0.06), 0 0 18px rgba(214,169,101,0.45);
+}
+
+@keyframes c60-shiver {
+  from { transform: rotate(-2deg) translateY(0); }
+  to { transform: rotate(2deg) translateY(-2px); }
+}
+
 /* Center the React-mounted actions container on the page */
 #react-single-actions {
   display: flex;
@@ -79,4 +236,20 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.c60-bubble-tag {
+  animation: c60-bubble-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+  font-weight: bold;
+  font-size: 14px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes c60-bubble-pop {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }

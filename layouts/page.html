@@ -46,9 +46,14 @@
 
   {{ .Content }}
   
+<<<<<<< Updated upstream
   <div id="react-app-components" data-post-id="{{ .File.UniqueID }}"></div>
+=======
+>>>>>>> Stashed changes
 </article>
+<div id="react-single-actions" data-post-id="{{ .File.UniqueID }}"></div>
 
+<<<<<<< Updated upstream
 {{ if or $hasTOC .Params.Toc }}
 <!-- Mobile TOC trigger + drawer (only shown on small screens via CSS) -->
 <button class="mobile-toc-trigger" aria-controls="mobile-toc" aria-expanded="false" title="Index">☰</button>
@@ -64,6 +69,10 @@
   <div class="mobile-safe-area-spacer"></div>
   </div>
 {{ end }}
+=======
+<!-- AlphaTab styles copied by Vite build to /react/alphatab -->
+<link rel="stylesheet" href="/react/alphatab/alphaTab.css" />
+>>>>>>> Stashed changes
 
 <script type="module" src="/react/page.bundle.js"></script>
 {{ end }}

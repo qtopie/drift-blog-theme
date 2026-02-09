@@ -1,13 +1,45 @@
-import { useEffect, useRef } from "react";
 import * as THREE from 'three';
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { OrbitControls } from 'three-stdlib';
+import '../App.css';
 
 type C60Props = {
   containerSelector?: string;
 };
 
+const fortuneCookieKey = "c60_fortune";
+
+const getFortuneCookie = () => {
+  if (typeof document === "undefined") return "";
+  const cookie = document.cookie
+    .split(";")
+    .map((item) => item.trim())
+    .find((item) => item.startsWith(`${fortuneCookieKey}=`));
+  return cookie ? decodeURIComponent(cookie.split("=")[1] ?? "") : "";
+};
+
+const setFortuneCookie = (value: string) => {
+  if (typeof document === "undefined") return;
+  const now = new Date();
+  const nextMidnight = new Date(now);
+  nextMidnight.setHours(24, 0, 0, 0);
+  document.cookie = `${fortuneCookieKey}=${encodeURIComponent(value)}; expires=${nextMidnight.toUTCString()}; path=/`;
+};
+
 export const C60 = ({ containerSelector }: C60Props) => {
   const refContainer = useRef<HTMLDivElement>(null);
+  const [fortune, setFortune] = useState<string>("");
+  const [isSpinning, setIsSpinning] = useState<boolean>(false);
+  const [showCurtain, setShowCurtain] = useState<boolean>(false); // Control big curtain visibility
+  const [domContainer, setDomContainer] = useState<HTMLElement | null>(null);
+  const spinSpeedRef = useRef<number>(2.0);
+  const spinningRef = useRef<boolean>(false);
+  const rafRef = useRef<number | null>(null);
+
+  // Animation Refs
+  const targetScaleRef = useRef(1.0);
+  const showBubbleRef = useRef(false);
 
   useEffect(() => {
     // === 1. Geometry Construction (C60 Logic) ===
@@ -95,7 +127,14 @@ export const C60 = ({ containerSelector }: C60Props) => {
     const externalContainer = containerSelector ? document.querySelector(containerSelector) as HTMLElement | null : null;
     const container = externalContainer ?? refContainer.current;
     if (!container) return;
+if (externalContainer) {
+      externalContainer.style.position = 'relative';
+      externalContainer.style.overflow = 'hidden';
+      // If external, we need to let React know where to render the overlay
+      setDomContainer(externalContainer);
+    }
 
+    
     let width = container.clientWidth || 600;
     let height = container.clientHeight || 400;
     renderer.setSize(width, height);
@@ -109,9 +148,15 @@ export const C60 = ({ containerSelector }: C60Props) => {
     // === TIME CHECK ===
     const hour = new Date().getHours();
     const isNight = hour < 6 || hour >= 18;
+    
+    // Animation targets
+    // Removed local let variables to use Refs directly in animate loop
+    // targetScaleRef, showBubbleRef
 
     let particlesMesh: THREE.Points | undefined;
     let coreMesh: THREE.Mesh | undefined;
+    let mesh: THREE.Mesh | undefined; // Day/Main mesh
+    let bubble: THREE.Mesh | undefined;
 
     if (isNight) {
       // === NIGHT MODE: Crystal Starry C60 ===
@@ -201,7 +246,7 @@ export const C60 = ({ containerSelector }: C60Props) => {
       const mesh = new THREE.Mesh(geometry, crystalMaterial);
       scene.add(mesh);
 
-      // -- Internal "Starry Universe" Core -- 
+      // -- Internal "Starry Universe" Core --  
       // Instead of a single solid core, let's put a "Galaxy" inside
       const galaxyGeo = new THREE.IcosahedronGeometry(1.8, 1);
       const galaxyMat = new THREE.MeshBasicMaterial({
@@ -269,8 +314,7 @@ export const C60 = ({ containerSelector }: C60Props) => {
           new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5, metalness: 0.1 })  // Hexagons (White)
       ];
 
-      const mesh = new THREE.Mesh(geometry, materials);
-      scene.add(mesh);
+      mesh = new THREE.Mesh(geometry, materials);      scene.add(mesh);
       
       // Wireframe for definition
       const wGeo = new THREE.WireframeGeometry(geometry);
@@ -293,25 +337,73 @@ export const C60 = ({ containerSelector }: C60Props) => {
       scene.add(sun);
     }
 
+    // === Bubble Mesh ===
+    const bubbleGeo = new THREE.SphereGeometry(2.2, 32, 32);
+    const bubbleMat = new THREE.MeshPhongMaterial({ 
+      color: 0xaaccff, 
+      transparent: true, 
+      opacity: 0.3, 
+      shininess: 100,
+      specular: 0xffffff,
+      side: THREE.DoubleSide
+    });
+    bubble = new THREE.Mesh(bubbleGeo, bubbleMat);
+    bubble.visible = false;
+    scene.add(bubble);
+
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.autoRotate = true;
-    controls.autoRotateSpeed = isNight ? 1.0 : 2.0;
+    const baseSpeed = isNight ? 1.0 : 2.0;
+    spinSpeedRef.current = baseSpeed;
+    controls.autoRotateSpeed = baseSpeed;
 
     const animate = function () {
-      requestAnimationFrame(animate);
+      rafRef.current = requestAnimationFrame(animate);
+      controls.autoRotateSpeed = spinSpeedRef.current;
       controls.update();
+
+      const scaleSpeed = 0.05;
 
       if (isNight) {
         if (particlesMesh) {
           particlesMesh.rotation.y -= 0.002;
           particlesMesh.rotation.x += 0.001;
+          // Apply shrinking
+          const curr = particlesMesh.scale.x;
+          particlesMesh.scale.setScalar(curr + (targetScaleRef.current - curr) * scaleSpeed);
+
         }
         if (coreMesh) {
           const time = Date.now() * 0.002;
-          coreMesh.scale.setScalar(1 + Math.sin(time) * 0.1);
+           // Integrate breathing with shrinking
+          const breath = 1 + Math.sin(time) * 0.1;
+          
+          if (coreMesh.userData.currentScale === undefined) coreMesh.userData.currentScale = 1;
+          coreMesh.userData.currentScale += (targetScaleRef.current - coreMesh.userData.currentScale) * scaleSpeed;
+          coreMesh.scale.setScalar(coreMesh.userData.currentScale * breath);
         }
+      } else {
+         if (mesh) {
+            const curr = mesh.scale.x;
+            mesh.scale.setScalar(curr + (targetScaleRef.current - curr) * scaleSpeed);
+         }
+      }
+
+      if (bubble) {
+          if (showBubbleRef.current) {
+              bubble.visible = true;
+              const curr = bubble.scale.x;
+              bubble.scale.setScalar(curr + (1 - curr) * 0.1);
+          } else {
+              if (bubble.scale.x < 0.01) {
+                  bubble.visible = false;
+              } else {
+                  // Shrink out
+                  bubble.scale.setScalar(bubble.scale.x * 0.9);
+              }
+          }
       }
       
       renderer.render(scene, camera);
@@ -327,7 +419,104 @@ export const C60 = ({ containerSelector }: C60Props) => {
     };
     window.addEventListener('resize', onResize);
 
+    const startDraw = () => {
+      const existing = getFortuneCookie();
+      if (existing) {
+        setFortune(existing);
+        return;
+      }
+      if (spinningRef.current) return;
+      spinningRef.current = true;
+      setIsSpinning(true);
+      setFortune("");
+
+      // Phase 1: Accelerate
+      const durationMs = 2000;
+      const startSpeed = spinSpeedRef.current;
+      const topSpeed = 25.0; 
+      const startTime = performance.now();
+
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - startTime) / durationMs);
+        // Exponential acceleration
+        spinSpeedRef.current = startSpeed + (topSpeed - startSpeed) * (t * t);
+        
+        if (t < 1) {
+          requestAnimationFrame(tick);
+          return;
+        }
+
+        // Phase 2: Shrink
+        targetScaleRef.current = 0.001;
+
+        // Phase 3: Show Fortune (Wait for shrink)
+        setTimeout(() => {
+            const fortunes = ["大吉", "中吉", "吉", "末吉", "凶", "大凶"];
+            const pick = fortunes[Math.floor(Math.random() * fortunes.length)];
+            setFortuneCookie(pick);
+            setFortune(pick);
+            setShowCurtain(true); // Show Big Curtain
+            spinSpeedRef.current = baseSpeed;
+
+            // Phase 4: Wait 5s & Return
+            setTimeout(() => {
+                setShowCurtain(false); // Hide Big Curtain
+                targetScaleRef.current = 1.0; // Grow Sphere
+                showBubbleRef.current = true; // Show bubble attached
+                
+                // Allow re-spin logic reset?
+                setTimeout(() => {
+                    spinningRef.current = false;
+                    setIsSpinning(false);
+                }, 1000);
+            }, 5000);
+
+        }, 800);
+      };
+
+      requestAnimationFrame(tick);
+    };
+
+    container.addEventListener("click", startDraw);
+
+    // Manual Spin Detection
+    let lastAzimuth = controls.getAzimuthalAngle();
+    let lastTime = performance.now();
+    
+    const onControlsChange = () => {
+        if (spinningRef.current) return;
+        const now = performance.now();
+        // Throttle check
+        if (now - lastTime > 50) { 
+             const az = controls.getAzimuthalAngle();
+             const delta = Math.abs(az - lastAzimuth);
+             // Handle wrap around PI/-PI? OrbitControls usually limits or wraps. 
+             // If difference is large, it might be wrap.
+             // Simple speed check:
+             const speed = delta / ((now - lastTime) / 1000);
+             if (speed > 8.0) { // Fast spin
+                 startDraw();
+             }
+             lastAzimuth = az;
+             lastTime = now;
+        }
+    };
+    controls.addEventListener('change', onControlsChange);
+
+    const existing = getFortuneCookie();
+    if (existing) {
+      setFortune(existing);
+      // Don't show curtain on reload, just bubble (default showCurtain is false)
+      showBubbleRef.current = true;
+    }
+
+    // 清理
     return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+      container.removeEventListener("click", startDraw);
+      controls.removeEventListener('change', onControlsChange);
       renderer.dispose();
       window.removeEventListener('resize', onResize);
       if (container && renderer.domElement.parentNode === container) {
@@ -336,8 +525,67 @@ export const C60 = ({ containerSelector }: C60Props) => {
     };
   }, [containerSelector]);
 
+  const overlay = (
+    <>
+      <div
+        className={`c60-fortune ${showCurtain ? "c60-fortune--revealed" : ""} ${isSpinning ? "c60-fortune--spinning" : ""}`}
+      >
+        <div className="c60-curtain"></div>
+        <div className="c60-stick">
+          <div className="c60-stick-top" />
+          <div className="c60-paper">
+            <div className="c60-paper-title">唐风签</div>
+            <div className="c60-paper-text">{fortune}</div>
+            <div className="c60-paper-footer">今日一签</div>
+            <div className="c60-paper-seal">印</div>
+          </div>
+          <div className="c60-stick-tassel" />
+        </div>
+      </div>
+      
+      {/* Bubble Portal UI when sphere is visible and no Big Curtain */}
+      {fortune && !isSpinning && !showCurtain && (
+         <div 
+           className={`c60-bubble-tag ${["凶", "大凶"].includes(fortune) ? "bad" : "good"}`}
+           style={{
+               position: 'absolute',
+               left: '50%',
+               top: '50%',
+               transform: 'translate(-50%, -50%)', // Centered on sphere
+               zIndex: 2,
+               pointerEvents: 'none',
+               color: '#fff',
+               fontWeight: 'bold',
+               fontSize: '14px',
+               textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+               background: ["凶", "大凶"].includes(fortune) ? 'rgba(0,0,0,0.6)' : 'rgba(200, 50, 50, 0.6)',
+               padding: '4px 8px',
+               borderRadius: '12px',
+               border: '1px solid rgba(255,255,255,0.3)'
+           }}
+         >
+           {fortune}
+         </div>
+      )} 
+    </>
+  );
+
+  if (containerSelector && domContainer) {
+    return (
+      <>
+        <div ref={refContainer} className="three-container c60-root" style={{ display: 'none' }} />
+        {createPortal(overlay, domContainer)}
+      </>
+    );
+  }
+
   return (
-    <div ref={refContainer} className="three-container" style={{ width: '100%', minHeight: '400px', cursor: 'pointer' }}></div>
+    <div
+      ref={refContainer}
+      className="three-container c60-root"
+    >
+      {overlay}
+    </div>
   );
 }
 
