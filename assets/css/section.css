@@ -13,6 +13,8 @@ main {
   min-height: 120px;
   padding-left: 0.7rem;
   margin-top: 16px;
+  display: flex;
+  align-items: flex-start;
 }
 
 .card:hover {
@@ -27,10 +29,6 @@ main {
   padding-bottom: 0.5rem;
 }
 
-.card {
-  display: flex;
-}
-
 .card article {
   padding-top: 0.5rem;
   display: block;
@@ -41,6 +39,7 @@ main {
   padding-right: 1rem;
   padding-top: 1rem;
   justify-content: flex-end;
+  display: flex;
 }
 
 .card .thumbnail amp-img {

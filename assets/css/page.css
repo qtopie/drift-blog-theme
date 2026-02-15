@@ -306,36 +306,30 @@ amp-img.contain img {
 
   /* Align Header Nav with Main Grid specifically for PC pages */
   header nav {
-    display: grid;
-    grid-template-columns: 160px minmax(0, 1fr) 250px;
-    gap: 4rem;
+    display: flex; /* Revert to flex to align left like home page */
     max-width: 1350px;
     margin: 0 auto;
-    padding: 0.5rem 0; /* Removing side padding to align exactly with grid edges */
+    padding: 0.5rem 1rem; /* Restore standard padding */
     align-items: center;
+    gap: 1rem;
   }
   
   /* Reset flex properties from main.css */
   header nav .search-root {
-    width: 100%;
-    flex: unset;
-    margin-top: 0; /* Reset global margin if any */
+    width: min(520px, 50vw); /* Restore width from main.css */
+    flex: 0 1 520px;
+    margin-top: 0; 
   }
 
   header nav .search-box {
     width: 100%;
-    max-width: 100%;
+    max-width: 520px;
   }
 
   /* Reset items placement for Nav */
   header nav > a { /* The Logo/Home Link */
-    grid-column: 2;
-    justify-self: start;
-    padding-left: 0.5rem; /* Match article padding */
-  }
-
-  header nav .search-root {
-    grid-column: 3;
+    /* Removed grid placement to let it flow naturally in flex */
+    padding-left: 0; 
   }
 }
 
