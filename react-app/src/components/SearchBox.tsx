@@ -96,13 +96,19 @@ export const SearchBox: React.FC = () => {
           placeholder="Search articles..."
           value={q}
           onFocus={() => setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 150)}
+          // Delay closing so click can register
+          onBlur={() => setTimeout(() => setOpen(false), 200)}
           onChange={(_,data) => setQ(data.value)}
         />
       </div>
 
       {open && q && results.length > 0 && (
-        <Card className="search-card">
+        <Card className="search-card" 
+          onMouseDown={(e) => {
+            // Prevent input blur when clicking results
+            e.preventDefault(); 
+          }}
+        >
           <CardHeader header={<Text weight="semibold">Search results</Text>} />
           <ul className="search-results">
             {results.map(r => (
