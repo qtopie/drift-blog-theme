@@ -56,6 +56,10 @@ main {
   text-decoration: none;
 }
 
+.card .metadata {
+  padding-top: 0.5rem;
+}
+
 .card .metadata .categories a {
   background-color: #e0f2f1; /* Light Cyan */
   color: #00695c;

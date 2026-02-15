@@ -18,7 +18,7 @@
       {{ range $paginator.Pages }}
       <div class="card">
         <article>
-          <h4 class="title"><a href="{{ .Permalink }}">{{ .Title | truncate 24 }}</a></h4>
+          <h3 class="title"><a href="{{ .Permalink }}">{{ .Title | truncate 24 }}</a></h3>
           <div class="metadata">
             <span class="date">{{ .Date.Format "2006-01-02" }}</span>
             {{ with .Params.Categories }}
