@@ -14,6 +14,26 @@
 <script src="{{ "js/jtab.js" | relURL }}" defer></script>
 {{- end -}}
 
+{{- /* Panzoom and D2 logic (loaded globally or on demand - currently global for simplicity but inside head) */ -}}
+{{- with resources.Get "js/panzoom.min.js" -}}
+  {{- if hugo.IsDevelopment -}}
+    <script src="{{ .RelPermalink }}" defer></script>
+  {{- else -}}
+    {{- with . | fingerprint -}}
+      <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- with resources.Get "js/d2-zoom.js" -}}
+  {{- if hugo.IsDevelopment -}}
+    <script src="{{ .RelPermalink }}" defer></script>
+  {{- else -}}
+    {{- with . | minify | fingerprint -}}
+      <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
 {{/* TOC interactions for pages that render a TableOfContents */}}
 {{- $tocHTML := .TableOfContents -}}
 {{- $hasTOC := gt (len (findRE "<li>" $tocHTML)) 0 -}}

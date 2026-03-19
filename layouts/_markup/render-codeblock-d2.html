@@ -7,9 +7,17 @@
 {{- $targetPath := printf "static/%s" $fileName -}}
 {{- $hasSVG := os.FileExists $targetPath -}}
 
-<div class="d2-wrapper" style="position: relative;">
+<div class="d2-container" id="d2-{{ $hash }}" style="position: relative; border: 1px solid #f0f0f0; border-radius: 6px; background: #fff; overflow: hidden;">
   {{- if $hasSVG -}}
-    <img src="{{ $fileName | relURL }}" alt="D2 Diagram">
+    <div class="d2-controls" style="position: absolute; top: 8px; right: 8px; z-index: 10; display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <button class="d2-btn-zoom-in" title="Zoom In" style="border: 1px solid #ddd; background: #fff; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 3px; padding: 0;">+</button>
+      <button class="d2-btn-zoom-out" title="Zoom Out" style="border: 1px solid #ddd; background: #fff; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 3px; padding: 0;">-</button>
+      <button class="d2-btn-reset" title="Reset" style="border: 1px solid #ddd; background: #fff; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 3px; padding: 0;">R</button>
+    </div>
+    <div class="d2-wrapper" style="width: 100%; height: auto; overflow: hidden; cursor: grab; display: flex; justify-content: center;">
+      <img src="{{ $fileName | relURL }}" alt="D2 Diagram" style="max-width: 100%; height: auto; transition: none;">
+    </div>
+    <div class="watermark-overlay" style="pointer-events: none; position: absolute; bottom: 5px; right: 5px; opacity: 0.5; font-size: 0.8em; color: #888;">qtopie.github.io</div>
   {{- else -}}
     <pre data-d2-missing="true" data-d2-target="{{ $fileName }}" data-d2-hash="{{ $hash }}" data-d2-theme="{{ $theme }}" data-d2-len="{{ len $normalizedCode }}"><code class="language-d2">{{ $d2Code | htmlEscape }}</code></pre>
   {{- end -}}
