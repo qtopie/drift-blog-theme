@@ -1,5 +1,16 @@
 {{- /* Shortcode: wraps inner as mermaid and mark page */ -}}
 {{ .Page.Store.Set "hasMermaid" true }}
+<style>
+  .mermaid-block .mermaid-toolbar {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .mermaid-block:hover .mermaid-toolbar {
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>
 <div class="mermaid-block" data-mermaid-zoom="1">
   <div class="mermaid-toolbar">
     <button class="mermaid-btn" type="button" data-action="zoom-in" aria-label="Zoom in">+</button>
