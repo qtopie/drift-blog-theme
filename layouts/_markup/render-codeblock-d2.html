@@ -1,0 +1,15 @@
+{{- $d2Code := .Inner -}}
+{{- $theme := .Attributes.theme | default "0" -}}
+{{- $hash := md5 (printf "%s|theme=%s" $d2Code $theme) -}}
+{{- $fileName := printf "diagrams/d2-%s.svg" $hash -}}
+{{- $targetPath := printf "static/%s" $fileName -}}
+{{- $hasSVG := os.FileExists $targetPath -}}
+
+<div class="d2-wrapper" style="position: relative;">
+  {{- if $hasSVG -}}
+    <img src="{{ $fileName | relURL }}" alt="D2 Diagram">
+    <div class="watermark-overlay">qtopie.github.io</div>
+  {{- else -}}
+    <pre><code class="language-d2">{{ $d2Code | htmlEscape }}</code></pre>
+  {{- end -}}
+</div>
