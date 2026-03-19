@@ -46,8 +46,8 @@
 
   {{ .Content }}
   
-  <div id="react-app-components" data-post-id="{{ .File.UniqueID }}"></div>
 </article>
+<div id="react-app-components" data-post-id="{{ .File.UniqueID }}"></div>
 
 {{ if or $hasTOC .Params.Toc }}
 <!-- Mobile TOC trigger + drawer (only shown on small screens via CSS) -->

@@ -1,5 +1,13 @@
 {{- /* Mark this page as having mermaid so templates can conditionally load the script */ -}}
 {{ .Page.Store.Set "hasMermaid" true }}
-<div class="mermaid">
-  {{- .Inner | safeHTML -}}
+<div class="mermaid-block" data-mermaid-zoom="1">
+  <div class="mermaid-toolbar">
+    <button class="mermaid-btn" type="button" data-action="zoom-in" aria-label="Zoom in">+</button>
+    <button class="mermaid-btn" type="button" data-action="zoom-out" aria-label="Zoom out">-</button>
+    <button class="mermaid-btn" type="button" data-action="reset" aria-label="Reset zoom">100%</button>
+    <button class="mermaid-btn" type="button" data-action="fullscreen" aria-label="Toggle fullscreen">Full</button>
+  </div>
+  <div class="mermaid mermaid-canvas">
+    {{- .Inner | safeHTML -}}
+  </div>
 </div>

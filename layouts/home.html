@@ -2,6 +2,7 @@
   <div id="react-home-root"></div>
 
 <main id="content" role="main">
+  <link rel="stylesheet" href="/react/assets/home.css">
   <div class="container">
 
     <div class="page-list">
@@ -17,13 +18,29 @@
       {{ range $paginator.Pages }}
       <div class="card">
         <article>
-          <h4 class="title"><a href="{{ .Permalink }}">{{ .Title | truncate 24 }}</a></h4>
+          <h3 class="title"><a href="{{ .Permalink }}">{{ .Title | truncate 24 }}</a></h3>
           <div class="metadata">
             <span class="date">{{ .Date.Format "2006-01-02" }}</span>
+            {{ with .Params.Categories }}
+            <span class="categories">
+              &nbsp;|&nbsp;
+              {{ range . }}
+              [<a href="{{ $.Site.BaseURL }}categories/{{ . | urlize }}">{{ . }}</a>]
+              {{ end }}
+            </span>
+            {{ end }}
+            {{ with .Params.tags }}
+            <span class="tags">
+              &nbsp;|&nbsp;
+              {{ range . }}
+              <a href="{{ $.Site.BaseURL }}tags/{{ . | urlize }}">#{{ . }}</a>
+              {{ end }}
+            </span>
+            {{ end }}
           </div>
           <div class="description">
             <p>
-              <em>{{ .Summary | plainify | truncate 90 }}</em>
+              <em>{{ .Summary | plainify | truncate 100 }}</em>
               &nbsp;<span><a href="{{ .Permalink }}">Read More>></a></span>
             </p>
           </div>

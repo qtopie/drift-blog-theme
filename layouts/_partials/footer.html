@@ -42,6 +42,74 @@
           const prefersDark = document.body.classList.contains('dark') || window.matchMedia('(prefers-color-scheme: dark)').matches;
           mermaid.initialize({ startOnLoad: false, theme: prefersDark ? 'dark' : 'default' });
           mermaid.init && mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+
+          const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+          const setupBlock = (block) => {
+            if (block.dataset.mermaidReady === 'true') return;
+            block.dataset.mermaidReady = 'true';
+            const canvas = block.querySelector('.mermaid-canvas');
+            const toolbar = block.querySelector('.mermaid-toolbar');
+            if (!canvas || !toolbar) return;
+
+            const ensureSvg = (callback) => {
+              const svg = canvas.querySelector('svg');
+              if (svg) { callback(svg); return; }
+              const observer = new MutationObserver(() => {
+                const svgNow = canvas.querySelector('svg');
+                if (svgNow) {
+                  observer.disconnect();
+                  callback(svgNow);
+                }
+              });
+              observer.observe(canvas, { childList: true, subtree: true });
+            };
+
+            const setZoom = (nextZoom) => {
+              const zoom = clamp(nextZoom, 0.5, 3);
+              block.dataset.mermaidZoom = String(zoom);
+              const resetBtn = toolbar.querySelector('[data-action="reset"]');
+              if (resetBtn) resetBtn.textContent = `${Math.round(zoom * 100)}%`;
+              ensureSvg((svg) => {
+                svg.style.transform = `scale(${zoom})`;
+              });
+            };
+
+            const onFullscreenChange = () => {
+              const isFullscreen = document.fullscreenElement === block;
+              block.classList.toggle('is-fullscreen', isFullscreen);
+              const fsBtn = toolbar.querySelector('[data-action="fullscreen"]');
+              if (fsBtn) {
+                fsBtn.textContent = isFullscreen ? 'Exit' : 'Full';
+                fsBtn.setAttribute('aria-label', isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen');
+              }
+            };
+
+            document.addEventListener('fullscreenchange', onFullscreenChange);
+
+            toolbar.addEventListener('click', (event) => {
+              const target = event.target;
+              if (!(target instanceof HTMLElement)) return;
+              const action = target.getAttribute('data-action');
+              if (!action) return;
+              const currentZoom = Number(block.dataset.mermaidZoom || '1');
+              if (action === 'zoom-in') return setZoom(currentZoom + 0.1);
+              if (action === 'zoom-out') return setZoom(currentZoom - 0.1);
+              if (action === 'reset') return setZoom(1);
+              if (action === 'fullscreen') {
+                if (document.fullscreenElement === block) {
+                  document.exitFullscreen && document.exitFullscreen();
+                } else if (block.requestFullscreen) {
+                  block.requestFullscreen();
+                } else {
+                  block.classList.toggle('is-fullscreen');
+                }
+              }
+            });
+
+            setZoom(Number(block.dataset.mermaidZoom || '1'));
+          };
+
+          document.querySelectorAll('.mermaid-block').forEach(setupBlock);
         } catch (e) { console.error('mermaid load error', e); }
       })();
     </script>
