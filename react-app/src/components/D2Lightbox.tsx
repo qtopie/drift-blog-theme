@@ -8,9 +8,9 @@ import {
 } from '@fluentui/react-components';
 import { 
   Dismiss24Regular,
-  ZoomIn24Regular,
-  ZoomOut24Regular,
-  ArrowReset24Regular
+  ArrowReset24Regular,
+  FullScreenMaximize24Regular,
+  FullScreenMinimize24Regular
 } from '@fluentui/react-icons';
 
 // We'll use the global panzoom if available, or just simple scaling
@@ -74,7 +74,9 @@ export const D2Lightbox: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentSrc, setCurrentSrc] = useState('');
   const [panzoomInstance, setPanzoomInstance] = useState<any>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const imgRef = React.useRef<HTMLImageElement>(null);
+  const overlayRef = React.useRef<HTMLDivElement>(null);
 
   const openLightbox = useCallback((src: string) => {
     setCurrentSrc(src);
@@ -84,6 +86,9 @@ export const D2Lightbox: React.FC = () => {
   }, []);
 
   const closeLightbox = useCallback(() => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
     setIsOpen(false);
     setCurrentSrc('');
     document.body.style.overflow = '';
@@ -92,6 +97,27 @@ export const D2Lightbox: React.FC = () => {
       setPanzoomInstance(null);
     }
   }, [panzoomInstance]);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!overlayRef.current) return;
+
+    if (!document.fullscreenElement) {
+      overlayRef.current.requestFullscreen().catch((err) => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }, []);
+
+  // Sync fullscreen state
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
 
   // Attach click listeners to D2 diagrams
   useEffect(() => {
@@ -153,7 +179,10 @@ export const D2Lightbox: React.FC = () => {
   if (!isOpen) return null;
 
   return createPortal(
-    <div className={styles.overlay} onClick={(e) => {
+    <div 
+      ref={overlayRef}
+      className={styles.overlay} 
+      onClick={(e) => {
       // Close if clicking outside the image (on the overlay)
       if (e.target === e.currentTarget) {
         closeLightbox();
@@ -161,28 +190,10 @@ export const D2Lightbox: React.FC = () => {
     }}>
       <div className={styles.controls}>
         <Button 
-          icon={<ZoomIn24Regular />} 
+          icon={isFullscreen ? <FullScreenMinimize24Regular /> : <FullScreenMaximize24Regular />} 
           className={styles.controlButton}
-          title="Zoom In"
-          onClick={() => {
-            if (panzoomInstance) {
-              const cx = window.innerWidth / 2;
-              const cy = window.innerHeight / 2;
-              panzoomInstance.smoothZoom(cx, cy, 1.25);
-            }
-          }}
-        />
-        <Button 
-          icon={<ZoomOut24Regular />} 
-          className={styles.controlButton}
-          title="Zoom Out"
-          onClick={() => {
-            if (panzoomInstance) {
-              const cx = window.innerWidth / 2;
-              const cy = window.innerHeight / 2;
-              panzoomInstance.smoothZoom(cx, cy, 0.8);
-            }
-          }}
+          title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+          onClick={toggleFullscreen}
         />
         <Button 
           icon={<ArrowReset24Regular />} 
