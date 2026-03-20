@@ -75,11 +75,13 @@ export const D2Lightbox: React.FC = () => {
   const [currentSrc, setCurrentSrc] = useState('');
   const [panzoomInstance, setPanzoomInstance] = useState<any>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const imgRef = React.useRef<HTMLImageElement>(null);
   const overlayRef = React.useRef<HTMLDivElement>(null);
 
   const openLightbox = useCallback((src: string) => {
     setCurrentSrc(src);
+    setIsImageLoaded(false);
     setIsOpen(true);
     // Disable body scroll
     document.body.style.overflow = 'hidden';
@@ -119,51 +121,62 @@ export const D2Lightbox: React.FC = () => {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Attach click listeners to D2 diagrams
+  // Attach click listeners to D2 diagrams and buttons
   useEffect(() => {
     const handleImageClick = (e: Event) => {
-      const target = e.target as HTMLImageElement;
-      if (target.closest('.d2-wrapper')) {
+      const target = e.target as HTMLElement;
+      // Handle click on the image
+      if (target.tagName === 'IMG' && target.closest('.d2-wrapper')) {
         e.preventDefault();
-        e.stopPropagation(); // Stop d2-zoom.js or others
-        openLightbox(target.src);
+        e.stopPropagation(); 
+        openLightbox((target as HTMLImageElement).src);
+      }
+      // Handle click on the fullscreen button
+      if (target.closest('.d2-btn-fullscreen')) {
+        e.preventDefault();
+        e.stopPropagation();
+        const wrapper = target.closest('.d2-container');
+        const img = wrapper?.querySelector('.d2-wrapper img') as HTMLImageElement;
+        if (img) {
+          openLightbox(img.src);
+        }
       }
     };
 
-    const d2Images = document.querySelectorAll('.d2-wrapper img');
-    d2Images.forEach(img => {
-      img.addEventListener('click', handleImageClick);
-      (img as HTMLElement).style.cursor = 'zoom-in';
+    // We add listener to document to catch dynamically added elements or just simplfy logic
+    // But scoped to specific elements is better.
+    // Let's attach to the container level to catch button clicks too.
+    const containers = document.querySelectorAll('.d2-container');
+    containers.forEach(container => {
+      container.addEventListener('click', handleImageClick);
+      
+      const img = container.querySelector('.d2-wrapper img');
+      if (img) (img as HTMLElement).style.cursor = 'zoom-in';
     });
 
     return () => {
-      d2Images.forEach(img => {
-        img.removeEventListener('click', handleImageClick);
-        (img as HTMLElement).style.cursor = '';
+      containers.forEach(container => {
+        container.removeEventListener('click', handleImageClick);
+        const img = container.querySelector('.d2-wrapper img');
+        if (img) (img as HTMLElement).style.cursor = '';
       });
     };
   }, [openLightbox]);
 
-  // Initialize panzoom when lightbox opens
+  // Initialize panzoom when lightbox opens and image is loaded
   useEffect(() => {
-    if (isOpen && imgRef.current && window.panzoom) {
-      // Small timeout to ensure image is rendered
-      const timer = setTimeout(() => {
-        if (imgRef.current) {
-          const instance = window.panzoom(imgRef.current, {
-            maxZoom: 10,
-            minZoom: 0.1,
-            initialZoom: 1,
-            bounds: false,
-            boundsPadding: 0.1,
-            autocenter: true, // Attempt to center content
-          });
-          setPanzoomInstance(instance);
-        }
-      }, 100);
-      return () => clearTimeout(timer);
+    if (isOpen && isImageLoaded && imgRef.current && window.panzoom) {
+      const instance = window.panzoom(imgRef.current, {
+        maxZoom: 10,
+        minZoom: 0.1,
+        initialZoom: 1,
+        bounds: false,
+        boundsPadding: 0.1,
+        // autocenter: false - we rely on CSS flexbox for centering
+      });
+      setPanzoomInstance(instance);
     }
-  }, [isOpen]);
+  }, [isOpen, isImageLoaded]);
 
   // Handle escape key
   useEffect(() => {
@@ -220,6 +233,7 @@ export const D2Lightbox: React.FC = () => {
           alt="D2 Diagram Fullscreen" 
           className={styles.image}
           onClick={(e) => e.stopPropagation()} 
+          onLoad={() => setIsImageLoaded(true)}
         />
       </div>
     </div>,
