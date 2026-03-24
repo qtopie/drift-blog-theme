@@ -1,12 +1,10 @@
-{{- $d2Code := .Inner | htmlUnescape -}}
+{{- $d2Code := .Inner -}}
 {{- $theme := printf "%v" (.Attributes.theme | default 0) -}}
 {{- $cleaned := $d2Code | replaceRE "\r\n?" "\n" -}}
 {{- $normalizedTabs := replace $cleaned "\t" "    " -}}
+{{- /* Remove ONLY leading and trailing blank lines (matched by \A and \z) */ -}}
 {{- $normalizedCode := $normalizedTabs | replaceRE "\\A(?:[ \t]*\n)+" "" | replaceRE "(?:\n[ \t]*)+\\z" "" -}}
-{{- $hashInput := printf "%s|theme=%s" $normalizedCode $theme -}}
-{{- if ne $normalizedCode "" -}}
-  {{- $hashInput = printf "%s\n|theme=%s" $normalizedCode $theme -}}
-{{- end -}}
+{{- $hashInput := printf "%s\n|theme=%s" $normalizedCode $theme -}}
 {{- $hash := md5 $hashInput -}}
 {{- $fileName := printf "diagrams/d2-%s.svg" $hash -}}
 {{- $targetPath := printf "static/%s" $fileName -}}
