@@ -1,25 +1,31 @@
-{{- $d2Code := .Inner -}}
-{{- $theme := .Attributes.theme | default "0" -}}
+{{- $d2Code := .Inner | htmlUnescape -}}
+{{- $theme := printf "%v" (.Attributes.theme | default 0) -}}
 {{- $cleaned := $d2Code | replaceRE "\r\n?" "\n" -}}
-{{- $normalizedCode := replace $cleaned "\t" "    " | strings.TrimSpace -}}
-{{- $hash := md5 (printf "%s\n|theme=%s" $normalizedCode $theme) -}}
+{{- $normalizedTabs := replace $cleaned "\t" "    " -}}
+{{- $normalizedCode := $normalizedTabs | replaceRE "\\A(?:[ \t]*\n)+" "" | replaceRE "(?:\n[ \t]*)+\\z" "" -}}
+{{- $hashInput := printf "%s|theme=%s" $normalizedCode $theme -}}
+{{- if ne $normalizedCode "" -}}
+  {{- $hashInput = printf "%s\n|theme=%s" $normalizedCode $theme -}}
+{{- end -}}
+{{- $hash := md5 $hashInput -}}
 {{- $fileName := printf "diagrams/d2-%s.svg" $hash -}}
 {{- $targetPath := printf "static/%s" $fileName -}}
 {{- $hasSVG := os.FileExists $targetPath -}}
 
-<div class="d2-container" id="d2-{{ $hash }}" style="position: relative; border: 1px solid #f0f0f0; border-radius: 6px; background: #fff; overflow: hidden;">
+<div class="d2-container" id="d2-{{ $hash }}">
   {{- if $hasSVG -}}
-    <div class="d2-controls" style="position: absolute; top: 8px; right: 8px; z-index: 10; display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-      <button class="d2-btn-zoom-in" title="Zoom In" style="border: 1px solid #ddd; background: #fff; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 3px; padding: 0;">+</button>
-      <button class="d2-btn-zoom-out" title="Zoom Out" style="border: 1px solid #ddd; background: #fff; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 3px; padding: 0;">-</button>
-      <button class="d2-btn-reset" title="Reset" style="border: 1px solid #ddd; background: #fff; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 3px; padding: 0;">R</button>
-      <button class="d2-btn-fullscreen" title="Fullscreen" style="border: 1px solid #ddd; background: #fff; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 3px; padding: 0;">⤢</button>
+    <div class="d2-controls">
+      <button class="d2-btn-zoom-in" title="Zoom In">+</button>
+      <button class="d2-btn-zoom-out" title="Zoom Out">-</button>
+      <button class="d2-btn-reset" title="Reset">R</button>
+      <button class="d2-btn-fullscreen" title="Fullscreen">⤢</button>
     </div>
-    <div class="d2-wrapper" style="width: 100%; height: auto; overflow: hidden; cursor: grab; display: flex; justify-content: center;">
-      <img src="{{ $fileName | relURL }}" alt="D2 Diagram" style="max-width: 100%; height: auto; transition: none;">
+    <div class="d2-wrapper">
+      <img src="{{ $fileName | relURL }}" alt="D2 Diagram">
     </div>
-    <div class="watermark-overlay" style="pointer-events: none; position: absolute; bottom: 5px; right: 5px; opacity: 0.5; font-size: 0.8em; color: #888;">qtopie.github.io</div>
+    <div class="watermark-overlay">qtopie.github.io</div>
   {{- else -}}
+    <div class="d2-missing-hint">D2 SVG is missing (target: <code>{{ $fileName }}</code>). Run <code>./scripts/generate-d2-diagrams.sh</code> to regenerate diagrams.</div>
     <pre data-d2-missing="true" data-d2-target="{{ $fileName }}" data-d2-hash="{{ $hash }}" data-d2-theme="{{ $theme }}" data-d2-len="{{ len $normalizedCode }}"><code class="language-d2">{{ $d2Code | htmlEscape }}</code></pre>
   {{- end -}}
 </div>

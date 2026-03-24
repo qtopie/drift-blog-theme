@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function initPanzoom() {
   document.querySelectorAll('.d2-container').forEach(container => {
     const wrapper = container.querySelector('.d2-wrapper');
+    if (!wrapper) return;
+
     const img = wrapper.querySelector('img');
     if (!img) return;
 
