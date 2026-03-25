@@ -37,6 +37,16 @@
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
+/* Fluent Button defaults can stretch the control; lock to a true circle. */
+.scrollToTop.fui-Button {
+  min-width: 48px;
+  min-height: 48px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 999px;
+}
+
 .scrollToTop:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0,0,0,.18), 0 2px 4px rgba(0,0,0,.12);
@@ -53,6 +63,13 @@
     height: 44px;
     bottom: calc(var(--space-1) + env(safe-area-inset-bottom, 0px));
     right: calc(var(--space-1) + env(safe-area-inset-right, 0px));
+  }
+
+  .scrollToTop.fui-Button {
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
   }
 }
 

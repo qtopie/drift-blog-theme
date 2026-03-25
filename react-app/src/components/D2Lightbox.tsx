@@ -126,7 +126,7 @@ export const D2Lightbox: React.FC = () => {
     const handleImageClick = (e: Event) => {
       const target = e.target as HTMLElement;
       // Handle click on the image
-      if (target.tagName === 'IMG' && target.closest('.d2-wrapper')) {
+      if (target.tagName === 'IMG' && target.closest('.d2-img-container')) {
         e.preventDefault();
         e.stopPropagation(); 
         openLightbox((target as HTMLImageElement).src);
@@ -136,7 +136,7 @@ export const D2Lightbox: React.FC = () => {
         e.preventDefault();
         e.stopPropagation();
         const wrapper = target.closest('.d2-container');
-        const img = wrapper?.querySelector('.d2-wrapper img') as HTMLImageElement;
+        const img = wrapper?.querySelector('.d2-img-container img') as HTMLImageElement;
         if (img) {
           openLightbox(img.src);
         }
@@ -150,14 +150,14 @@ export const D2Lightbox: React.FC = () => {
     containers.forEach(container => {
       container.addEventListener('click', handleImageClick);
       
-      const img = container.querySelector('.d2-wrapper img');
+      const img = container.querySelector('.d2-img-container img');
       if (img) (img as HTMLElement).style.cursor = 'zoom-in';
     });
 
     return () => {
       containers.forEach(container => {
         container.removeEventListener('click', handleImageClick);
-        const img = container.querySelector('.d2-wrapper img');
+        const img = container.querySelector('.d2-img-container img');
         if (img) (img as HTMLElement).style.cursor = '';
       });
     };

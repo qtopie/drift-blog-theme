@@ -194,16 +194,15 @@ article pre {
   padding: 0;
 }
 
-.d2-wrapper {
+.d2-img-container {
   width: 100%;
   height: auto;
   overflow: hidden;
-  cursor: grab;
   display: flex;
   justify-content: center;
 }
 
-.d2-wrapper img {
+.d2-img-container img {
   max-width: 100%;
   height: auto;
   transition: none;

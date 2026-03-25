@@ -13,12 +13,9 @@
 <div class="d2-container" id="d2-{{ $hash }}">
   {{- if $hasSVG -}}
     <div class="d2-controls">
-      <button class="d2-btn-zoom-in" title="Zoom In">+</button>
-      <button class="d2-btn-zoom-out" title="Zoom Out">-</button>
-      <button class="d2-btn-reset" title="Reset">R</button>
       <button class="d2-btn-fullscreen" title="Fullscreen">⤢</button>
     </div>
-    <div class="d2-wrapper">
+    <div class="d2-img-container">
       <img src="{{ $fileName | relURL }}" alt="D2 Diagram">
     </div>
     <div class="watermark-overlay">qtopie.github.io</div>
