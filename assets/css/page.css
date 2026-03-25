@@ -99,8 +99,8 @@ amp-carousel .ampstart-image-with-caption {
 /* article */
 @media (max-width: 767px) {
   article#content {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
@@ -122,6 +122,12 @@ article.text-content {
   color: var(--color-text);
 }
 
+@media (max-width: 480px) {
+  .article-title {
+    font-size: 1.5rem;
+  }
+}
+
 .article-meta {
   color: var(--color-text-muted);
   font-size: 0.95rem;
@@ -135,6 +141,15 @@ article h1 {
 
 article h2 {
   margin: 2rem 0 0.9rem;
+}
+
+@media (max-width: 600px) {
+  article h1 {
+    margin: 1.5rem 0 0.8rem;
+  }
+  article h2 {
+    margin: 1.25rem 0 0.75rem;
+  }
 }
 
 article h3 {
@@ -706,6 +721,13 @@ article pre {
   white-space: pre-wrap;
   word-break: break-all;
   position: relative; /* For copy button positioning */
+}
+
+@media (max-width: 600px) {
+  article pre {
+    padding: 10px;
+    font-size: 0.82rem; /* slightly smaller on mobile */
+  }
 }
 
 /* Ensure code inside pre inherits wrapper style */
