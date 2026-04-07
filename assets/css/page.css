@@ -361,49 +361,46 @@ amp-img.contain img {
   margin-right: 0.5rem;
 }
 
-/* --- Responsive two-column layout: article + sidebar --- */
-@media (min-width: 1024px) {
+/* --- Desktop layout: centered article, TOC kept on the right --- */
+@media (min-width: 1280px) {
   main {
     display: grid;
-    grid-template-columns: minmax(0, 1200px) 250px;
+    grid-template-columns: minmax(160px, 180px) minmax(0, 880px) minmax(160px, 180px);
     justify-content: center;
-    gap: 3rem;
+    gap: 1rem;
     align-items: start;
-    max-width: 1536px; /* 1024 + 512 */
+    max-width: 1280px;
   }
 
-  /* Ensure both occupy the same first row */
   article {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1;
-    font-size: 1.15rem; /* Larger font for PC */
+    font-size: 1.15rem;
     line-height: 1.7;
   }
 
   article#content {
     width: 100%;
-    max-width: 1200px;
-    justify-self: stretch;
+    max-width: 880px;
+    justify-self: center;
   }
 
   .sidebar {
-    grid-column: 2;
+    grid-column: 3;
     grid-row: 1;
-    /* Push the starting position of TOC down to be below the title region */
-    margin-top: 140px; 
+    margin-top: 140px;
   }
 
-  /* Keep TOC visible while scrolling */
   .sidebar .toc {
     position: sticky;
-    top: 20px; 
+    top: 20px;
     max-height: 90vh;
     overflow: auto;
     padding: 12px 10px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     background: #fff;
-    width: 250px;
+    width: 100%;
   }
 
   .sidebar .toc h2 {
@@ -412,21 +409,19 @@ amp-img.contain img {
     color: var(--color-text-muted);
   }
 
-  /* Align Header Nav with Main Grid specifically for PC pages */
   header nav {
-    display: flex; /* Revert to flex to align left like home page */
-    max-width: 1536px;
+    display: flex;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0.5rem 1rem; /* Restore standard padding */
+    padding: 0.5rem 1rem;
     align-items: center;
     gap: 1rem;
   }
   
-  /* Reset flex properties from main.css */
   header nav .search-root {
-    width: min(520px, 50vw); /* Restore width from main.css */
+    width: min(520px, 50vw);
     flex: 0 1 520px;
-    margin-top: 0; 
+    margin-top: 0;
   }
 
   header nav .search-box {
@@ -434,10 +429,31 @@ amp-img.contain img {
     max-width: 520px;
   }
 
-  /* Reset items placement for Nav */
-  header nav > a { /* The Logo/Home Link */
-    /* Removed grid placement to let it flow naturally in flex */
-    padding-left: 0; 
+  header nav > a {
+    padding-left: 0;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  main {
+    display: block;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  article {
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  article#content {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  header nav {
+    max-width: 1120px;
   }
 }
 
@@ -588,12 +604,12 @@ amp-img.contain img {
 }
 
 /* Visibility rules */
-@media (max-width: 1024px) {
+@media (max-width: 1279px) {
   .sidebar { display: none; }
   .mobile-toc-trigger { display: inline-flex; align-items: center; gap: 6px; }
 }
 
-@media (min-width: 1025px) {
+@media (min-width: 1280px) {
   .mobile-toc-drawer, .mobile-toc-overlay { display: none !important; }
 }
 
