@@ -7,7 +7,7 @@ main {
 
 @media (max-width: 1120px) {
   main {
-    max-width: 100vw;
+    max-width: 100%;
   }
 }
 
@@ -261,7 +261,11 @@ article p {
 }
 
 .container article img {
-  max-width: -webkit-fill-available;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.5rem auto;
+  border-radius: 4px;
 }
 
 /* https://amp.dev/documentation/components/amp-img/#maintaining-the-aspect-ratio-for-images-with-unknown-dimensions */
@@ -361,22 +365,29 @@ amp-img.contain img {
 @media (min-width: 1024px) {
   main {
     display: grid;
-    /* 3-column layout: Spacer(Left) | Content | Sidebar */
-    /* This pushes the article toward the center to balance the right sidebar */
-    grid-template-columns: 160px minmax(0, 1fr) 250px;
-    gap: 4rem; 
+    grid-template-columns: minmax(0, 1200px) 250px;
+    justify-content: center;
+    gap: 3rem;
     align-items: start;
-    max-width: 1350px; /* Increased to accommodate left spacer */
+    max-width: 1536px; /* 1024 + 512 */
   }
 
   /* Ensure both occupy the same first row */
   article {
-    grid-column: 2; /* Moved to center column */
+    grid-column: 1;
     grid-row: 1;
+    font-size: 1.15rem; /* Larger font for PC */
+    line-height: 1.7;
+  }
+
+  article#content {
+    width: 100%;
+    max-width: 1200px;
+    justify-self: stretch;
   }
 
   .sidebar {
-    grid-column: 3; /* Moved to right column */
+    grid-column: 2;
     grid-row: 1;
     /* Push the starting position of TOC down to be below the title region */
     margin-top: 140px; 
@@ -404,7 +415,7 @@ amp-img.contain img {
   /* Align Header Nav with Main Grid specifically for PC pages */
   header nav {
     display: flex; /* Revert to flex to align left like home page */
-    max-width: 1350px;
+    max-width: 1536px;
     margin: 0 auto;
     padding: 0.5rem 1rem; /* Restore standard padding */
     align-items: center;
@@ -604,14 +615,18 @@ html {
 /* 文章内容自动换行与代码块优化 */
 article {
   overflow-wrap: break-word;
-  word-wrap: break-word;
 }
 
-article pre,
-article code {
-  white-space: pre-wrap; /* 允许代码块内文字自动换行 */
-  word-break: break-all; /* 防止长单词溢出 */
+article pre {
+  white-space: pre; /* Keep code formatting */
+  word-break: normal;
+  word-wrap: normal;
+  overflow-x: auto; /* Enable horizontal scroll */
   max-width: 100%;
+}
+
+article code {
+  word-break: break-word;
 }
 
 /* TOC 多级缩进与字体大小 */
@@ -627,7 +642,7 @@ article code {
 
 #TableOfContents a {
   display: block;
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.4;
   color: var(--color-text-muted);
   text-decoration: none;
@@ -641,16 +656,16 @@ article code {
 
 /* H3 层级缩进 */
 #TableOfContents ul ul {
-  padding-left: 1.5rem; /* Increased from 1.2rem for distinct step */
+  padding-left: 1rem;
   margin-top: 4px;
 }
 
 #TableOfContents ul ul a {
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   color: #88909c; /* 略淡的颜色区分层级 */
 }
 
-/* H4/H5 deeper indentation recursively handled by ul ul rule (1.5rem + 1.5rem) */
+/* H4/H5 deeper indentation recursively handled by ul ul rule */
 
 
 /* 移动端 TOC 样式适配 */
@@ -663,14 +678,16 @@ article code {
 }
 .mobile-toc-body a {
   display: block;
-  padding: 6px 0;
+  padding: 8px 0;
   font-size: 1rem;
   color: var(--color-text);
   text-decoration: none;
+  border-bottom: 1px solid #f3f4f6;
 }
 .mobile-toc-body ul ul a {
   font-size: 0.9rem;
   color: var(--color-text-muted);
+  border-bottom: none;
 }
 
 /* 让标题与顶部留出空间，避免被顶栏遮挡 */
@@ -717,16 +734,18 @@ article pre {
   border-radius: 6px;
   overflow: auto;
   line-height: 1.45;
-  /* Ensure text wrapping */
-  white-space: pre-wrap;
-  word-break: break-all;
+  /* Disable wrapping for code */
+  white-space: pre;
+  word-break: normal;
   position: relative; /* For copy button positioning */
 }
 
 @media (max-width: 600px) {
   article pre {
-    padding: 10px;
-    font-size: 0.82rem; /* slightly smaller on mobile */
+    padding: 12px;
+    font-size: 0.85rem; /* slightly smaller on mobile */
+    margin: 1rem 0;
+    border-radius: 0;
   }
 }
 
@@ -736,6 +755,7 @@ article pre code {
   padding: 0;
   font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
   font-size: 85%;
+  white-space: pre;
 }
 
 /* Inline code styling */

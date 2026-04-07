@@ -216,9 +216,11 @@ header nav {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
+  max-width: 1536px;
+  margin: 0 auto;
 }
-header nav h1 { margin: 0; font-size: 1.25rem; }
+header nav h1 { margin: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; }
 header nav a { text-decoration: none; color: var(--color-text); }
 /* Reserve fixed space for search to prevent layout shift */
 .search-root { flex: 0 1 520px; width: min(520px, 50vw); }
@@ -231,12 +233,18 @@ header nav a { text-decoration: none; color: var(--color-text); }
 @media (max-width: 600px) {
   header nav {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem 1rem;
   }
+  header nav h1 { text-align: center; }
   .search-root {
-    flex: 1 1 100%;
+    flex: 1 1 auto;
     width: 100%;
+  }
+  .search-box {
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -352,7 +360,9 @@ header a:hover { text-decoration: none; }
  }
 
  img {
-   border-style: none
+   border-style: none;
+   max-width: 100%;
+   height: auto;
  }
 
  svg:not(:root) {
