@@ -365,23 +365,23 @@ amp-img.contain img {
 @media (min-width: 1280px) {
   main {
     display: grid;
-    grid-template-columns: minmax(160px, 180px) minmax(0, 880px) minmax(160px, 180px);
+    grid-template-columns: minmax(160px, 180px) minmax(0, 960px) minmax(160px, 180px);
     justify-content: center;
     gap: 1rem;
     align-items: start;
-    max-width: 1280px;
+    max-width: 1360px;
   }
 
   article {
     grid-column: 2;
     grid-row: 1;
-    font-size: 1.15rem;
-    line-height: 1.7;
+    font-size: 1.3rem;
+    line-height: 1.95;
   }
 
   article#content {
     width: 100%;
-    max-width: 880px;
+    max-width: 960px;
     justify-self: center;
   }
 
@@ -437,18 +437,18 @@ amp-img.contain img {
 @media (min-width: 1024px) and (max-width: 1279px) {
   main {
     display: block;
-    max-width: 880px;
+    max-width: 960px;
     margin: 0 auto;
   }
 
   article {
-    font-size: 1.1rem;
-    line-height: 1.7;
+    font-size: 1.25rem;
+    line-height: 1.9;
   }
 
   article#content {
     width: 100%;
-    max-width: 880px;
+    max-width: 960px;
     margin: 0 auto;
   }
 
