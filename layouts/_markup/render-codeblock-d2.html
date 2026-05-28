@@ -20,7 +20,11 @@
     </div>
     <div class="watermark-overlay">qtopie.github.io</div>
   {{- else -}}
-    <div class="d2-missing-hint">D2 SVG is missing (target: <code>{{ $fileName }}</code>). Run <code>./scripts/generate-d2-diagrams.sh</code> to regenerate diagrams.</div>
-    <pre data-d2-missing="true" data-d2-target="{{ $fileName }}" data-d2-hash="{{ $hash }}" data-d2-theme="{{ $theme }}" data-d2-len="{{ len $normalizedCode }}"><code class="language-d2">{{ $d2Code | htmlEscape }}</code></pre>
+    {{- if hugo.IsProduction -}}
+      {{- errorf "D2 SVG is missing (target: %s). Run ./scripts/generate-d2-diagrams.sh to regenerate diagrams." $fileName -}}
+    {{- else -}}
+      <div class="d2-missing-hint">D2 SVG is missing (target: <code>{{ $fileName }}</code>). Run <code>./scripts/generate-d2-diagrams.sh</code> to regenerate diagrams.</div>
+      <pre data-d2-missing="true" data-d2-target="{{ $fileName }}" data-d2-hash="{{ $hash }}" data-d2-theme="{{ $theme }}" data-d2-len="{{ len $normalizedCode }}"><code class="language-d2">{{ $d2Code | htmlEscape }}</code></pre>
+    {{- end -}}
   {{- end -}}
 </div>
