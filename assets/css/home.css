@@ -1,7 +1,7 @@
 main {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 var(--space-2);
+  padding: 0 0.5rem;
   padding-top: var(--space-1);
 }
 
@@ -93,12 +93,12 @@ main {
 /* Mobile adjustments: edge-to-edge layout and C60 sizing */
 @media (max-width: 600px) {
   main {
-    padding-left: var(--space-2);
-    padding-right: var(--space-2);
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
   }
 
   .card {
-    padding: 0.85rem;
+    padding: 0.75rem;
     gap: 0.75rem;
   }
 

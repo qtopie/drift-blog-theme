@@ -1,5 +1,5 @@
 {{ define "main" }}
-<main id="content" role="main">
+<div id="content">
   <div class="container">
 
     <div class="page-list">
@@ -15,7 +15,7 @@
       {{ range $paginator.Pages }}
       <div class="card">
         <article>
-          <h4 class="title"><a href="{{ .Permalink }}">{{ .Title | truncate 24 }}</a></h4>
+          <h4 class="title"><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
           <div class="metadata">
             <span class="date">{{ .Date.Format "2006-01-02" }}</span>
           </div>
@@ -42,5 +42,5 @@
     </div>
 
   </div>
-</main>
+</div>
 {{ end }}
