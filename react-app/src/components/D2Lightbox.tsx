@@ -123,8 +123,10 @@ export const D2Lightbox: React.FC = () => {
 
   // Attach click listeners to D2 diagrams and buttons
   useEffect(() => {
+    console.log("D2Lightbox useEffect mounted, containers:", document.querySelectorAll('.d2-container').length);
     const handleImageClick = (e: Event) => {
       const target = e.target as HTMLElement;
+      console.log("handleImageClick triggered, target:", target.tagName, target.className);
       // Handle click on the image
       if (target.tagName === 'IMG' && target.closest('.d2-img-container')) {
         e.preventDefault();
@@ -137,6 +139,7 @@ export const D2Lightbox: React.FC = () => {
         e.stopPropagation();
         const wrapper = target.closest('.d2-container');
         const img = wrapper?.querySelector('.d2-img-container img') as HTMLImageElement;
+        console.log("Fullscreen button clicked, found img:", !!img);
         if (img) {
           openLightbox(img.src);
         }

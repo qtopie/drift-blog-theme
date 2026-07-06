@@ -5,6 +5,7 @@
   {{- $hasTOC := gt (len (findRE "<li>" $tocHTML)) 0 -}}
   {{ if or $hasTOC .Params.Toc }}
   <section class="toc">
+      <div class="toc-title">目录</div>
       {{ .TableOfContents }}
     </section>
   {{ end }}
@@ -51,11 +52,12 @@
 
 {{ if or $hasTOC .Params.Toc }}
 <!-- Mobile TOC trigger + drawer (only shown on small screens via CSS) -->
-<button class="mobile-toc-trigger" aria-controls="mobile-toc" aria-expanded="false" title="Index">☰</button>
+<button class="mobile-toc-trigger" aria-controls="mobile-toc" aria-expanded="false" title="目录">☰</button>
 <div class="mobile-toc-overlay" hidden></div>
-<div id="mobile-toc" class="mobile-toc-drawer" aria-hidden="true" role="dialog" aria-label="Index">
+<div id="mobile-toc" class="mobile-toc-drawer" aria-hidden="true" role="dialog" aria-label="目录">
   <div class="mobile-toc-header">
-    <button class="mobile-toc-close" aria-label="close">×</button>
+    <span class="mobile-toc-title">目录</span>
+    <button class="mobile-toc-close" aria-label="关闭">×</button>
   </div>
   <nav class="mobile-toc-body">
     <!-- We'll clone the main TOC list into here via JS to avoid duplicate IDs -->

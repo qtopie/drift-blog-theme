@@ -16,9 +16,11 @@
       <button class="d2-btn-fullscreen" title="Fullscreen">⤢</button>
     </div>
     <div class="d2-img-container">
-      <img src="{{ $fileName | relURL }}" alt="D2 Diagram">
+      <div style="position: relative; display: inline-flex; align-items: center; justify-content: center; max-width: 100%;">
+        <img src="{{ $fileName | relURL }}" alt="D2 Diagram" style="max-width: 100%; height: auto;">
+        <div class="watermark-overlay" style="pointer-events: none; position: absolute; bottom: 5px; right: 5px; opacity: 0.4; font-size: 11px; color: #999;">qtopie.github.io</div>
+      </div>
     </div>
-    <div class="watermark-overlay">qtopie.github.io</div>
   {{- else -}}
     {{- if hugo.IsProduction -}}
       {{- errorf "D2 SVG is missing (target: %s). Run ./scripts/generate-d2-diagrams.sh to regenerate diagrams." $fileName -}}

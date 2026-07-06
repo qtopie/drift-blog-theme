@@ -74,14 +74,45 @@
               });
             };
 
+            let pz = null;
             const onFullscreenChange = () => {
-              const isFullscreen = document.fullscreenElement === block;
+              const isFullscreen = document.fullscreenElement === block || block.classList.contains('is-fullscreen');
               block.classList.toggle('is-fullscreen', isFullscreen);
               const fsBtn = toolbar.querySelector('[data-action="fullscreen"]');
               if (fsBtn) {
                 fsBtn.textContent = isFullscreen ? 'Exit' : 'Full';
                 fsBtn.setAttribute('aria-label', isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen');
               }
+
+              ensureSvg((svg) => {
+                if (isFullscreen) {
+                  if (window.panzoom && !pz) {
+                    svg.style.transformOrigin = '50% 50%';
+                    pz = window.panzoom(svg, {
+                      maxZoom: 3,
+                      minZoom: 0.5,
+                      initialZoom: 1,
+                      bounds: false,
+                      boundsPadding: 0.1
+                    });
+                    pz.on('transform', () => {
+                      const transform = pz.getTransform();
+                      const resetBtn = toolbar.querySelector('[data-action="reset"]');
+                      if (resetBtn) resetBtn.textContent = `${Math.round(transform.scale * 100)}%`;
+                    });
+                  }
+                } else {
+                  if (pz) {
+                    pz.dispose();
+                    pz = null;
+                  }
+                  svg.style.transform = '';
+                  svg.style.transformOrigin = '';
+                  const resetBtn = toolbar.querySelector('[data-action="reset"]');
+                  if (resetBtn) resetBtn.textContent = '100%';
+                  block.dataset.mermaidZoom = '1';
+                }
+              });
             };
 
             document.addEventListener('fullscreenchange', onFullscreenChange);
@@ -91,17 +122,39 @@
               if (!(target instanceof HTMLElement)) return;
               const action = target.getAttribute('data-action');
               if (!action) return;
-              const currentZoom = Number(block.dataset.mermaidZoom || '1');
-              if (action === 'zoom-in') return setZoom(currentZoom + 0.1);
-              if (action === 'zoom-out') return setZoom(currentZoom - 0.1);
-              if (action === 'reset') return setZoom(1);
-              if (action === 'fullscreen') {
-                if (document.fullscreenElement === block) {
-                  document.exitFullscreen && document.exitFullscreen();
-                } else if (block.requestFullscreen) {
-                  block.requestFullscreen();
-                } else {
-                  block.classList.toggle('is-fullscreen');
+
+              if (pz) {
+                const transform = pz.getTransform();
+                const rect = canvas.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                if (action === 'zoom-in') {
+                  pz.smoothZoom(cx, cy, 1.25);
+                } else if (action === 'zoom-out') {
+                  pz.smoothZoom(cx, cy, 0.8);
+                } else if (action === 'reset') {
+                  pz.moveTo(0, 0);
+                  pz.zoomAbs(0, 0, 1);
+                } else if (action === 'fullscreen') {
+                  if (document.fullscreenElement === block) {
+                    document.exitFullscreen && document.exitFullscreen();
+                  } else {
+                    block.classList.remove('is-fullscreen');
+                    onFullscreenChange();
+                  }
+                }
+              } else {
+                const currentZoom = Number(block.dataset.mermaidZoom || '1');
+                if (action === 'zoom-in') return setZoom(currentZoom + 0.1);
+                if (action === 'zoom-out') return setZoom(currentZoom - 0.1);
+                if (action === 'reset') return setZoom(1);
+                if (action === 'fullscreen') {
+                  if (block.requestFullscreen) {
+                    block.requestFullscreen();
+                  } else {
+                    block.classList.add('is-fullscreen');
+                    onFullscreenChange();
+                  }
                 }
               }
             });
