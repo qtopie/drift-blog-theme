@@ -8,7 +8,7 @@
 {{- $hash := md5 $hashInput -}}
 {{- $fileName := printf "diagrams/d2-%s.svg" $hash -}}
 {{- $targetPath := printf "static/%s" $fileName -}}
-{{- $hasSVG := os.FileExists $targetPath -}}
+{{- $hasSVG := or (fileExists $targetPath) (os.FileExists $targetPath) -}}
 
 <div class="d2-container" id="d2-{{ $hash }}">
   {{- if $hasSVG -}}
@@ -16,8 +16,8 @@
       <button class="d2-btn-fullscreen" title="Fullscreen">⤢</button>
     </div>
     <div class="d2-img-container">
-      <div style="position: relative; display: inline-flex; align-items: center; justify-content: center; max-width: 100%;">
-        <img src="{{ $fileName | relURL }}" alt="D2 Diagram" style="max-width: 100%; height: auto;">
+      <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 100%;">
+        <img src="{{ $fileName | relURL }}" alt="D2 Diagram" style="width: 100%; max-width: 100%; height: auto;">
         <div class="watermark-overlay" style="pointer-events: none; position: absolute; bottom: 5px; right: 5px; opacity: 0.4; font-size: 11px; color: #999;">qtopie.github.io</div>
       </div>
     </div>

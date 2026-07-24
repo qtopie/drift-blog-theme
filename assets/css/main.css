@@ -172,6 +172,8 @@ html {
 
 /* --- Global Search Styles --- */
 .search-root { margin-top: 0.5rem; }
+.search-root > div,
+.search-root .fui-FluentProvider { width: 100%; }
 .search-box { position: relative; width: min(640px, 55vw); max-width: 640px; }
 .search-box.expanded { max-width: 640px; }
 .search-input-wrap {
