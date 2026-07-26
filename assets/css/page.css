@@ -416,6 +416,7 @@ amp-img.contain img {
 
   header nav {
     display: flex;
+    justify-content: space-between;
     max-width: 1280px;
     margin: 0 auto;
     padding: 0.5rem 1rem;
@@ -424,8 +425,11 @@ amp-img.contain img {
   }
   
   header nav .search-root {
+    flex: 1 1 520px;
     width: min(520px, 50vw);
-    flex: 0 1 520px;
+    max-width: 520px;
+    display: flex;
+    justify-content: center;
     margin-top: 0;
   }
 

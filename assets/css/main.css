@@ -272,7 +272,7 @@ header nav a { text-decoration: none; color: var(--color-text); }
   color: var(--color-primary, #005AF0);
 }
 /* Reserve fixed space for search to prevent layout shift */
-.search-root { flex: 1 1 640px; width: min(640px, 55vw); display: flex; justify-content: center; }
+.search-root { flex: 0 1 640px; display: flex; justify-content: center; min-width: 0; }
 @media (min-width: 768px) {
   header nav h1 { font-size: 1.5rem; }
   .search-box { max-width: 640px; }
