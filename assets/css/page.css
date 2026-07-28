@@ -857,3 +857,16 @@ article tr:nth-child(even) {
     opacity: 0.8;
   }
 }
+
+/* MathJax & KaTeX Block Equations horizontal scroll support */
+.katex-display,
+.mjx-chtml[display="true"],
+.MathJax_Display,
+mjx-container[jax="CHTML"][display="true"] {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.5rem 0;
+}
+
