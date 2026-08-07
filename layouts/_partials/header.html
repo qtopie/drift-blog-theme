@@ -5,6 +5,11 @@
 
   <div id="react-search" class="search-root" aria-label="Site Search"></div>
 
+  {{- $translationEnabled := .Site.Params.translation.enabled | default true -}}
+  {{- if $translationEnabled -}}
+  <div id="google_translate_element" class="translate-widget" aria-label="Translate this page"></div>
+  {{- end -}}
+
   <div class="nav-links">
     {{- $label := "Notes" -}}
     {{- $url := "/notes/" -}}

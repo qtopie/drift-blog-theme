@@ -78,3 +78,38 @@
 	{{- end -}}
 {{- end -}}
 
+{{/* Google Translate widget (client-side page translation) */}}
+{{- $translationEnabled := .Site.Params.translation.enabled | default true -}}
+{{- if $translationEnabled -}}
+	{{- $pageLanguage := .Site.Params.translation.pageLanguage | default "zh-CN" -}}
+	{{- $includedLanguages := .Site.Params.translation.includedLanguages | default "en,zh-CN" -}}
+	{{- $layoutRaw := .Site.Params.translation.layout | default "simple" -}}
+	{{- $layoutConst := printf "google.translate.TranslateElement.InlineLayout.%s" (upper $layoutRaw) -}}
+<script>
+	/* Google Translate Element: global init callback referenced by ?cb=googleTranslateElementInit */
+	window.googleTranslateElementInit = function () {
+		new google.translate.TranslateElement({
+			pageLanguage: '{{ $pageLanguage }}',
+			includedLanguages: '{{ $includedLanguages }}',
+			layout: {{ $layoutConst | safeJS }}
+		}, 'google_translate_element');
+	};
+	/* Graceful degradation: if the Google script fails to load (e.g. blocked network),
+	   hide the empty widget container so it never shows as a blank slot. */
+	window.__gtInitCalled = false;
+	var __gtOrigInit = window.googleTranslateElementInit;
+	window.googleTranslateElementInit = function () {
+		window.__gtInitCalled = true;
+		__gtOrigInit();
+	};
+	window.setTimeout(function () {
+		if (!window.__gtInitCalled) {
+			var el = document.getElementById('google_translate_element');
+			if (el) { el.style.display = 'none'; }
+			console.warn('[translation-widget] Google Translate unavailable');
+		}
+	}, 5000);
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
+{{- end -}}
+
