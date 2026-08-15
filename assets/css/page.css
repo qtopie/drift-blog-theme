@@ -696,6 +696,51 @@ article code {
   color: #88909c;
 }
 
+/* H3 默认折叠：展开按钮 + 折叠态 */
+#TableOfContents li.toc-has-children {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#TableOfContents li.toc-has-children > a {
+  flex: 1 1 auto;
+}
+
+#TableOfContents li.toc-has-children > ul {
+  flex: 0 0 100%;
+}
+
+#TableOfContents li.toc-collapsed > ul {
+  display: none;
+}
+
+#TableOfContents .toc-toggle {
+  flex: 0 0 auto;
+  width: 1.05rem;
+  height: 1.25rem;
+  margin-right: 2px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.7rem;
+  line-height: 1;
+  color: #88909c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, color 0.15s;
+}
+
+#TableOfContents .toc-toggle:hover {
+  color: var(--color-text);
+}
+
+#TableOfContents li.toc-has-children:not(.toc-collapsed) > .toc-toggle {
+  transform: rotate(90deg);
+}
+
 /* H4/H5 deeper indentation recursively handled by ul ul rule */
 
 
@@ -719,6 +764,52 @@ article code {
   font-size: 0.9rem;
   color: var(--color-text-muted);
   border-bottom: none;
+}
+
+/* 移动端抽屉 TOC：H3 默认折叠 + 展开按钮 */
+.mobile-toc-list li.toc-has-children {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.mobile-toc-list li.toc-has-children > a {
+  flex: 1 1 auto;
+}
+
+.mobile-toc-list li.toc-has-children > ul {
+  flex: 0 0 100%;
+  padding-left: 1.25rem;
+}
+
+.mobile-toc-list li.toc-collapsed > ul {
+  display: none;
+}
+
+.mobile-toc-list .toc-toggle {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.5rem;
+  margin-right: 2px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, color 0.15s;
+}
+
+.mobile-toc-list .toc-toggle:hover {
+  color: var(--color-text);
+}
+
+.mobile-toc-list li.toc-has-children:not(.toc-collapsed) > .toc-toggle {
+  transform: rotate(90deg);
 }
 
 /* 让标题与顶部留出空间，避免被顶栏遮挡 */

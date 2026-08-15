@@ -63,6 +63,43 @@
       mobileList.innerHTML = mainToc.innerHTML;
     }
 
+    // --- TOC 三级目录（H3）默认折叠 ---
+    // 给含子级（H3）的 H2 项注入展开按钮并默认折叠；点击按钮切换展开/收起。
+    // 渐进增强：JS 禁用时保持 Hugo 输出的完整目录。
+    const setupCollapse = (tocRoot) => {
+      if (!tocRoot) return;
+
+      tocRoot.querySelectorAll(':scope > ul > li').forEach((li) => {
+        const sub = li.querySelector(':scope > ul');
+        const link = li.querySelector(':scope > a');
+        if (!sub || !link || li.querySelector(':scope > .toc-toggle')) return;
+
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'toc-toggle';
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', '展开子目录');
+        toggle.textContent = '\u25B8'; // ▸
+
+        li.classList.add('toc-has-children', 'toc-collapsed');
+        sub.hidden = true;
+        li.insertBefore(toggle, link);
+      });
+
+      tocRoot.addEventListener('click', (e) => {
+        const toggle = e.target.closest('.toc-toggle');
+        if (!toggle || !tocRoot.contains(toggle)) return;
+        e.preventDefault();
+        const li = toggle.closest('li');
+        const sub = li.querySelector(':scope > ul');
+        const collapsed = li.classList.toggle('toc-collapsed');
+        if (sub) sub.hidden = collapsed;
+        toggle.setAttribute('aria-expanded', String(!collapsed));
+      });
+    };
+    setupCollapse(mainToc);
+    setupCollapse(mobileList);
+
     // Build a map id -> anchors (both desktop and mobile)
     const linkMap = new Map();
     const collectLinks = (root) => {
@@ -124,7 +161,23 @@
         anchors.forEach((a) => a.classList.remove('is-active'));
       }
       const anchors = linkMap.get(id);
-      if (anchors) anchors.forEach((a) => a.classList.add('is-active'));
+      if (anchors) {
+        anchors.forEach((a) => {
+          a.classList.add('is-active');
+          // 自动展开激活链接的所有折叠祖先（保证激活项可见）
+          let ancestor = a.closest('li') ? a.closest('li').parentElement : null;
+          while (ancestor) {
+            if (ancestor.classList && ancestor.classList.contains('toc-has-children')) {
+              ancestor.classList.remove('toc-collapsed');
+              const sub = ancestor.querySelector(':scope > ul');
+              if (sub) sub.hidden = false;
+              const toggle = ancestor.querySelector(':scope > .toc-toggle');
+              if (toggle) toggle.setAttribute('aria-expanded', 'true');
+            }
+            ancestor = ancestor.parentElement;
+          }
+        });
+      }
     };
 
     const observer = new IntersectionObserver((entries) => {
