@@ -697,14 +697,17 @@ article code {
 }
 
 /* H3 默认折叠：展开按钮 + 折叠态 */
+/* flex-basis:0 + min-width:0 保证箭头与标题同一行（flex-wrap 换行按
+   hypothetical size 计算，basis:auto 会把长标题挤到下一行） */
 #TableOfContents li.toc-has-children {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
 }
 
 #TableOfContents li.toc-has-children > a {
-  flex: 1 1 auto;
+  flex: 1 1 0%;
+  min-width: 0;
 }
 
 #TableOfContents li.toc-has-children > ul {
@@ -769,12 +772,13 @@ article code {
 /* 移动端抽屉 TOC：H3 默认折叠 + 展开按钮 */
 .mobile-toc-list li.toc-has-children {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
 }
 
 .mobile-toc-list li.toc-has-children > a {
-  flex: 1 1 auto;
+  flex: 1 1 0%;
+  min-width: 0;
 }
 
 .mobile-toc-list li.toc-has-children > ul {
