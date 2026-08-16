@@ -72,7 +72,22 @@
       tocRoot.querySelectorAll(':scope > ul > li').forEach((li) => {
         const sub = li.querySelector(':scope > ul');
         const link = li.querySelector(':scope > a');
-        if (!sub || !link || li.querySelector(':scope > .toc-toggle')) return;
+        if (!link) return;
+
+        // 无子目录的项：插入圆圈占位，与带折叠箭头的兄弟项标题起始位置对齐
+        if (!sub) {
+          if (!li.classList.contains('toc-leaf')) {
+            li.classList.add('toc-leaf');
+            const marker = document.createElement('span');
+            marker.className = 'toc-marker';
+            marker.setAttribute('aria-hidden', 'true');
+            marker.textContent = '\u25CB'; // ○
+            li.insertBefore(marker, link);
+          }
+          return;
+        }
+
+        if (li.querySelector(':scope > .toc-toggle')) return;
 
         const toggle = document.createElement('button');
         toggle.type = 'button';

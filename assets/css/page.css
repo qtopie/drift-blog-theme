@@ -744,6 +744,34 @@ article code {
   transform: rotate(90deg);
 }
 
+/* 无子目录项：圆圈占位，与折叠箭头同一缩进，保证标题数字对齐 */
+#TableOfContents li.toc-leaf {
+  display: flex;
+  align-items: flex-start;
+}
+
+#TableOfContents li.toc-leaf > a {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+#TableOfContents .toc-marker {
+  flex: 0 0 auto;
+  width: 1.05rem;
+  height: 1.25rem;
+  margin-right: 2px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.7rem;
+  line-height: 1;
+  color: #88909c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
 /* H4/H5 deeper indentation recursively handled by ul ul rule */
 
 
@@ -814,6 +842,34 @@ article code {
 
 .mobile-toc-list li.toc-has-children:not(.toc-collapsed) > .toc-toggle {
   transform: rotate(90deg);
+}
+
+/* 移动端无子目录项：圆圈占位，与折叠箭头同一缩进 */
+.mobile-toc-list li.toc-leaf {
+  display: flex;
+  align-items: flex-start;
+}
+
+.mobile-toc-list li.toc-leaf > a {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.mobile-toc-list .toc-marker {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.5rem;
+  margin-right: 2px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 
 /* 让标题与顶部留出空间，避免被顶栏遮挡 */
