@@ -1,11 +1,8 @@
 <div class="copyright">
   <small>
-    Made with <span style="color: #e25555;">&hearts;</span> in Guangzhou by
-    ©<a href="{{ .Site.Params.Author.url }}">{{ .Site.Params.Author.name }}</a> {{ .Site.Lastmod.Format "2006" }}
+    © <a href="{{ .Site.Params.Author.url }}">{{ .Site.Params.Author.name }}</a> {{ .Site.Lastmod.Format "2006" }}
+    {{ with .Site.Copyright }}· {{ . | safeHTML }}{{ end }}
   </small>
-  {{ with .Site.Copyright }}
-  <small>{{.| safeHTML}}</small>
-  {{ end }}
 </div>
 
 <!-- lazy init scripts -->
