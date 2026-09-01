@@ -78,38 +78,120 @@
 	{{- end -}}
 {{- end -}}
 
-{{/* Google Translate widget (client-side page translation) */}}
+{{/* Google Translate widget & direct toggle (client-side page translation) */}}
 {{- $translationEnabled := .Site.Params.translation.enabled | default true -}}
 {{- if $translationEnabled -}}
 	{{- $pageLanguage := .Site.Params.translation.pageLanguage | default "zh-CN" -}}
 	{{- $includedLanguages := .Site.Params.translation.includedLanguages | default "en,zh-CN" -}}
-	{{- $layoutRaw := .Site.Params.translation.layout | default "simple" -}}
-	{{- $layoutConst := printf "google.translate.TranslateElement.InlineLayout.%s" (upper $layoutRaw) -}}
 <script>
 	/* Google Translate Element: global init callback referenced by ?cb=googleTranslateElementInit */
 	window.googleTranslateElementInit = function () {
 		new google.translate.TranslateElement({
 			pageLanguage: '{{ $pageLanguage }}',
 			includedLanguages: '{{ $includedLanguages }}',
-			layout: {{ $layoutConst | safeJS }}
+			autoDisplay: false
 		}, 'google_translate_element');
 	};
-	/* Graceful degradation: if the Google script fails to load (e.g. blocked network),
-	   hide the empty widget container so it never shows as a blank slot. */
-	window.__gtInitCalled = false;
-	var __gtOrigInit = window.googleTranslateElementInit;
-	window.googleTranslateElementInit = function () {
-		window.__gtInitCalled = true;
-		__gtOrigInit();
-	};
-	window.setTimeout(function () {
-		if (!window.__gtInitCalled) {
-			var el = document.getElementById('google_translate_element');
-			if (el) { el.style.display = 'none'; }
-			console.warn('[translation-widget] Google Translate unavailable');
+
+	(function () {
+		function getCookie(name) {
+			var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+			return v ? decodeURIComponent(v[2]) : null;
 		}
-	}, 5000);
+
+		function isCurrentlyEn() {
+			var gt = getCookie('googtrans');
+			return gt === '/zh-CN/en' || gt === '/auto/en' || localStorage.getItem('site_lang') === 'en';
+		}
+
+		function updateBtnUI(isEn) {
+			var btn = document.getElementById('lang-toggle-btn');
+			var label = document.getElementById('lang-toggle-label');
+			if (label) {
+				label.textContent = isEn ? '中' : 'EN';
+			}
+			if (btn) {
+				btn.setAttribute('title', isEn ? '切换为中文' : 'Switch to English');
+				btn.classList.toggle('is-en', isEn);
+			}
+		}
+
+		function clearGoogleTransCookie() {
+			var host = window.location.hostname;
+			var domainParts = host.split('.');
+			var mainDomain = domainParts.length > 1 ? '.' + domainParts.slice(-2).join('.') : host;
+			var domains = ['', host, '.' + host, mainDomain];
+			var paths = ['/', ''];
+			domains.forEach(function (d) {
+				paths.forEach(function (p) {
+					document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=' + p + (d ? '; domain=' + d : '');
+				});
+			});
+		}
+
+		function setGoogleTransCookie(val) {
+			clearGoogleTransCookie();
+			var host = window.location.hostname;
+			var domainParts = host.split('.');
+			var mainDomain = domainParts.length > 1 ? '.' + domainParts.slice(-2).join('.') : host;
+			document.cookie = 'googtrans=' + val + '; path=/';
+			document.cookie = 'googtrans=' + val + '; path=/; domain=' + host;
+			if (domainParts.length > 1) {
+				document.cookie = 'googtrans=' + val + '; path=/; domain=' + mainDomain;
+			}
+		}
+
+		function toggleLanguage() {
+			var nextEn = !isCurrentlyEn();
+			localStorage.setItem('site_lang', nextEn ? 'en' : 'zh');
+
+			if (nextEn) {
+				setGoogleTransCookie('/zh-CN/en');
+			} else {
+				clearGoogleTransCookie();
+			}
+
+			updateBtnUI(nextEn);
+
+			var select = document.querySelector('.goog-te-combo');
+			if (select) {
+				select.value = nextEn ? 'en' : '';
+				select.dispatchEvent(new Event('change'));
+				if (!nextEn) {
+					setTimeout(function () {
+						window.location.reload();
+					}, 150);
+				}
+			} else {
+				window.location.reload();
+			}
+		}
+
+		window.toggleSiteLanguage = toggleLanguage;
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', function () {
+				updateBtnUI(isCurrentlyEn());
+				var btn = document.getElementById('lang-toggle-btn');
+				if (btn) btn.addEventListener('click', toggleLanguage);
+			});
+		} else {
+			updateBtnUI(isCurrentlyEn());
+			var btn = document.getElementById('lang-toggle-btn');
+			if (btn) btn.addEventListener('click', toggleLanguage);
+		}
+	})();
 </script>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
 {{- end -}}
 
+{{/* Drift motion micro-interactions JS (globally loaded) */}}
+{{- with resources.Get "js/drift-motion.js" -}}
+  {{- if hugo.IsDevelopment -}}
+    <script src="{{ .RelPermalink }}" defer></script>
+  {{- else -}}
+    {{- with . | minify | fingerprint -}}
+      <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

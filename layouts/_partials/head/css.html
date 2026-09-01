@@ -8,6 +8,17 @@
   {{- end }}
 {{- end }}
 
+{{/* Drift motion micro-interactions (globally loaded) */}}
+{{- with resources.Get "css/drift-motion.css" -}}
+  {{- if hugo.IsDevelopment -}}
+    <link rel="stylesheet" href="{{ .RelPermalink }}">
+  {{- else -}}
+    {{- with . | minify | fingerprint -}}
+      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
 {{/* Page-specific CSS using Hugo boolean helpers */}}
 {{- if .IsHome -}}
   {{- with resources.Get "css/home.css" -}}

@@ -1,5 +1,10 @@
 html {
   box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
 
 *, *:before, *:after {
@@ -143,6 +148,42 @@ html {
   transform-origin: 0 0;
 }
 
+/* Safety net: mermaid SVG text color must always be readable on white background.
+   These rules apply to any text not explicitly colored by mermaid's themeVariables. */
+.mermaid-canvas svg text,
+.mermaid-canvas svg tspan,
+.mermaid-canvas svg .label,
+.mermaid-canvas svg .nodeLabel {
+  fill: #1e293b !important;
+  color: #1e293b !important;
+}
+
+/* Edge labels specifically */
+.mermaid-canvas svg .edgeLabel,
+.mermaid-canvas svg .edgeLabel p {
+  color: #374151 !important;
+  background: rgba(255,255,255,0.9) !important;
+}
+
+/* Sequence diagram message text */
+.mermaid-canvas svg .messageText {
+  fill: #1e293b !important;
+  stroke: none !important;
+}
+
+/* Actor box text */
+.mermaid-canvas svg .actor-man text,
+.mermaid-canvas svg text.actor {
+  fill: #1e293b !important;
+}
+
+/* Note text */
+.mermaid-canvas svg .note text,
+.mermaid-canvas svg text.noteText {
+  fill: #1e293b !important;
+}
+
+
 .mermaid-block.is-fullscreen {
   position: fixed;
   inset: 0;
@@ -183,17 +224,16 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.08);
-  background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(247,249,255,0.92));
-  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-  transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(248, 250, 252, 0.80);
+  transition: border-color 160ms ease, background 160ms ease;
 }
 .search-input-wrap:focus-within {
-  border-color: rgba(0,90,240,0.28);
-  box-shadow: 0 0 0 3px rgba(0,90,240,0.16), 0 10px 20px rgba(0,0,0,0.08);
-  transform: translateY(-1px);
+  border-color: rgba(0,90,240,0.35);
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 0 0 3px rgba(0,90,240,0.10);
 }
 .search-input-wrap .search-icon { color: var(--color-text-muted); }
 .search-input-wrap .fui-Input { flex: 1; min-width: 0; }
@@ -228,16 +268,43 @@ header {
   border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 
-/* Header layout with responsive nav */
+/* Header layout — flex sides, search absolutely centered on the nav bar */
 header nav {
+  position: relative;          /* anchor for .search-root absolute */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.65rem 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
 }
+
+/* Brand: flex start, no grow */
+header nav > a:first-child {
+  flex: 0 0 auto;
+  z-index: 1;                  /* stay above the search layer */
+}
+
+/* Search: pinned to geometric center of the nav bar */
+.search-root {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(480px, 42vw);
+  min-width: 180px;
+  /* Clamp so it never overlaps brand or nav-actions */
+  max-width: calc(100% - 420px);
+}
+
+/* Nav actions: flex end, no grow */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 0 0 auto;
+  z-index: 1;
+}
+
 /* Brand title — Drift gradient — SPEC-HEADER-002 */
 header nav h1 {
   margin: 0;
@@ -252,13 +319,6 @@ header nav h1 {
 }
 header nav a { text-decoration: none; color: var(--color-text); }
 
-/* Right action bar grouping translate + nav links */
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex: 0 0 auto;
-}
 
 /* Nav links between title and search */
 .nav-links {
@@ -304,36 +364,37 @@ header nav a { text-decoration: none; color: var(--color-text); }
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   color: var(--color-primary, #005AF0);
 }
-/* Reserve fixed space for search to prevent layout shift */
-.search-root { flex: 0 1 360px; max-width: 360px; display: flex; justify-content: center; min-width: 0; }
-
-/* Google Translate widget: aligned with .nav-links text buttons — borderless icon */
-.translate-widget {
-  flex: 0 0 auto;
-  display: inline-flex;
+/* Nav action container */
+.nav-actions {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 0;
+  gap: 0.75rem;
 }
-.translate-widget .goog-te-gadget { font-size: 0; margin: 0; padding: 0; line-height: 1; }
-.translate-widget .goog-te-gadget img { display: none; } /* remove Google logo & arrow */
-.translate-widget .goog-te-gadget-simple {
+
+/* One-click Language Toggle Button */
+.lang-toggle-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 5px;
+  padding: 0.32rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1;
+  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
-  padding: 0.35rem 0.5rem;
-  border-radius: 6px;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  color: var(--color-text);
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
 }
-/* Fluent Reveal Highlight: light sweep on hover */
-.translate-widget .goog-te-gadget-simple::before {
+
+/* Fluent Reveal sweep on hover */
+.lang-toggle-btn::before {
   content: '';
   position: absolute;
   top: 0;
@@ -343,75 +404,65 @@ header nav a { text-decoration: none; color: var(--color-text); }
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255,255,255,0.35) 50%,
+    rgba(255, 255, 255, 0.35) 50%,
     transparent 100%
   );
   transform: skewX(-25deg);
   transition: left 0.35s ease;
   pointer-events: none;
 }
-.translate-widget .goog-te-gadget-simple:hover::before {
+
+.lang-toggle-btn:hover::before {
   left: 125%;
 }
-/* Fluent hover: acrylic background + accent color */
-.translate-widget .goog-te-gadget-simple:hover {
-  background: rgba(0, 90, 240, 0.08) !important;
+
+.lang-toggle-btn:hover {
+  background: rgba(0, 90, 240, 0.08);
+  border-color: rgba(0, 90, 240, 0.25);
+  color: var(--color-primary, #005AF0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.lang-toggle-btn:focus-visible {
+  outline: 2px solid rgba(0, 90, 240, 0.45);
+  outline-offset: 2px;
+}
+
+.lang-toggle-btn .lang-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.lang-toggle-btn .lang-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Active EN State */
+.lang-toggle-btn.is-en {
+  background: rgba(0, 90, 240, 0.1);
+  border-color: rgba(0, 90, 240, 0.3);
   color: var(--color-primary, #005AF0);
 }
-.translate-widget .goog-te-gadget-simple:focus,
-.translate-widget .goog-te-gadget-simple:focus-within {
-  outline: none;
+
+/* Suppress Google Translate top banner, tooltips, and frames */
+.goog-te-banner-frame,
+.goog-te-balloon-frame,
+#goog-gt-tt,
+.goog-te-spinner-pos,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
 }
-/* Google's element.js renders the button label as <span> texts, <img>
-   glyphs and a flag sprite. Hide every native label child so only the custom translate icon shows. */
-.translate-widget .goog-te-gadget-simple > img,
-.translate-widget .goog-te-gadget-simple a span,
-.translate-widget .goog-te-gadget-simple a img { display: none; }
-.translate-widget .goog-te-gadget-simple a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  text-decoration: none;
-  color: inherit;
-  font-size: 0;
+
+body {
+  top: 0 !important;
 }
-/* Fluent UI translate glyph (Material "translate" icon, Apache-2.0) */
-.translate-widget .goog-te-gadget-simple a::before {
-  content: "";
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  background-color: currentColor;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http://www.w3.org/2000/svg'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20d%3D'M12.87%2015.07l-2.54-2.51.03-.03A17.52%2017.52%200%200%200%2014.07%206H17V4h-7V2H8v2H1v2h11.17C11.5%207.92%2010.44%209.75%209%2011.35%208.07%2010.32%207.3%209.19%206.69%208h-2c.73%201.63%201.73%203.17%202.98%204.56l-5.09%205.02L4%2019l5-5%203.11%203.11.76-2.04zM18.5%2010h-2L12%2022h2l1.12-3h4.75L21%2022h2l-4.5-12zm-2.62%207l1.62-4.33L19.12%2017h-3.24z'%20fill%3D'black'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http://www.w3.org/2000/svg'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20d%3D'M12.87%2015.07l-2.54-2.51.03-.03A17.52%2017.52%200%200%200%2014.07%206H17V4h-7V2H8v2H1v2h11.17C11.5%207.92%2010.44%209.75%209%2011.35%208.07%2010.32%207.3%209.19%206.69%208h-2c.73%201.63%201.73%203.17%202.98%204.56l-5.09%205.02L4%2019l5-5%203.11%203.11.76-2.04zM18.5%2010h-2L12%2022h2l1.12-3h4.75L21%2022h2l-4.5-12zm-2.62%207l1.62-4.33L19.12%2017h-3.24z'%20fill%3D'black'/%3E%3C/svg%3E");
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-}
-/* Horizontal/vertical layout: native <select> styled per Fluent Select */
-.translate-widget .goog-te-combo {
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-  font-size: 14px;
-  height: 32px;
-  padding: 0 12px;
-  border: 1px solid #8A8886;
-  border-radius: 4px;
-  background: var(--color-bg);
-  color: var(--color-text);
-  cursor: pointer;
-}
-.translate-widget .goog-te-combo:hover {
-  border-color: #605E5C;
-  background: #F3F2F1;
-}
-.translate-widget .goog-te-combo:focus {
-  border-color: #0F6CBD;
-  outline: 1px solid #0F6CBD;
+
+.skiptranslate iframe {
+  display: none !important;
 }
 /* Desktop (≥ 1024px) — SPEC-HEADER-002 */
 @media (min-width: 1024px) {
@@ -422,8 +473,7 @@ header nav a { text-decoration: none; color: var(--color-text); }
 /* iPad (768-1023px) — SPEC-HEADER-004 */
 @media (min-width: 768px) and (max-width: 1023px) {
   header nav h1 { font-size: 1.4rem; }
-  .search-box { max-width: 480px; }
-  .search-root { flex: 0 1 480px; }
+  .search-root { width: min(360px, 38vw); }
 }
 
 /* Mobile (≤ 767px): title on left, nav & translate grouped top right, search streamlined */

@@ -36,8 +36,41 @@
         try {
           const mod = await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.mjs');
           const mermaid = mod.default || mod;
-          const prefersDark = document.body.classList.contains('dark') || window.matchMedia('(prefers-color-scheme: dark)').matches;
-          mermaid.initialize({ startOnLoad: false, theme: prefersDark ? 'dark' : 'default' });
+          // Always use 'default' (light) theme so text stays readable on the white .mermaid-block container.
+          // Custom themeVariables override the default pale-purple node fill with a softer blue-gray palette
+          // that keeps WCAG AA contrast against #1f2937 text.
+          mermaid.initialize({
+            startOnLoad: false,
+            theme: 'base',
+            themeVariables: {
+              /* node backgrounds */
+              primaryColor:       '#e8f0fe',   /* main node fill — soft blue */
+              primaryTextColor:   '#1e293b',   /* text inside nodes */
+              primaryBorderColor: '#93b4f8',   /* node border */
+              secondaryColor:     '#f1f5f9',   /* alt nodes (e.g. subgraph) */
+              secondaryTextColor: '#1e293b',
+              tertiaryColor:      '#fef9ec',   /* tertiary / note nodes */
+              tertiaryTextColor:  '#1e293b',
+              /* edges & labels */
+              edgeLabelBackground:'#ffffff',
+              lineColor:          '#64748b',
+              /* sequence diagram participants */
+              actorBkg:           '#dbeafe',
+              actorTextColor:     '#1e293b',
+              actorBorder:        '#93b4f8',
+              activationBkgColor: '#bfdbfe',
+              activationBorderColor: '#3b82f6',
+              /* notes */
+              noteBkgColor:       '#fefce8',
+              noteTextColor:      '#1e293b',
+              noteBorderColor:    '#fbbf24',
+              /* class diagram */
+              classText:          '#1e293b',
+              /* general */
+              fontSize:           '14px',
+              fontFamily:         '"Segoe UI", system-ui, -apple-system, sans-serif',
+            },
+          });
           mermaid.init && mermaid.init(undefined, document.querySelectorAll('.mermaid'));
 
           const clamp = (value, min, max) => Math.min(max, Math.max(min, value));

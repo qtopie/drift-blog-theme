@@ -1,0 +1,335 @@
+/**
+ * drift-motion.css — 竹筏漂流微交互样式
+ *
+ * 设计原则：
+ *   - 所有动效仅附着在「悬停触发态」「悬浮控件」「滚动过渡」上
+ *   - 正文段落文字与代码区域完全静止，阅读路径零干扰
+ *   - 兼容 prefers-reduced-motion，对运动敏感用户自动降级为极简过渡
+ */
+
+/* ─────────────────────────────────────────────
+   0. Motion token & Keyframe definitions
+   ───────────────────────────────────────────── */
+:root {
+  /* 竹筏弹性曲线：比标准 ease-out 多了一点回弹感 */
+  --drift-spring:       cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* 顺流曲线：平滑、不回弹，适合 TOC 指示条滑移 */
+  --drift-stream:       cubic-bezier(0.25, 1, 0.5, 1);
+  /* 水波消散：指数衰减感 */
+  --drift-ripple:       cubic-bezier(0.0, 0.0, 0.2, 1);
+  /* 标准阻尼：淡入位移 */
+  --drift-fade:         cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 章节浮出水面 */
+@keyframes driftIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 水波向外扩散 */
+@keyframes rippleSpread {
+  from {
+    opacity: 0.35;
+    transform: scale(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+
+/* 复制成功弹簧反弹 */
+@keyframes copyBounce {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(0.88); }
+  75%  { transform: scale(1.14); }
+  90%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+/* 竹筏浮力微起伏（用于 FAB idle 状态） */
+@keyframes floatBob {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-3px); }
+}
+
+
+/* ─────────────────────────────────────────────
+   1. 浮力反馈 — FAB 悬浮按钮 & TOC 触发器
+   ───────────────────────────────────────────── */
+
+/* 移动端目录按钮 — 水面轻摇 */
+.mobile-toc-trigger {
+  transition:
+    transform 0.4s var(--drift-spring),
+    box-shadow 0.4s ease,
+    background 0.2s ease;
+  animation: floatBob 4s ease-in-out infinite;
+}
+
+/* 悬停：筏体上浮 + 微倾斜 */
+.mobile-toc-trigger:hover {
+  transform: translateY(-5px) rotate(0.8deg) !important;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.06);
+  animation: none; /* 悬停时停止 idle 漂浮 */
+}
+
+/* 返回顶部按钮 — 同样的浮力感 */
+.scrollToTop {
+  transition:
+    transform 0.4s var(--drift-spring),
+    box-shadow 0.4s ease,
+    opacity 0.25s ease,
+    visibility 0.25s ease !important;
+}
+
+.scrollToTop:hover {
+  transform: translateY(-5px) rotate(-0.8deg) !important;
+  box-shadow: 0 12px 24px rgba(0, 90, 240, 0.18), 0 4px 8px rgba(0, 90, 240, 0.10);
+}
+
+
+/* ─────────────────────────────────────────────
+   2. 水纹点击态 (Ripple) — 通用可复用
+   ───────────────────────────────────────────── */
+
+/* 在需要水波的按钮/链接上加 class="drift-ripple" 即可，
+   也可以用 JS 在 click 时动态注入 .ripple-origin */
+.drift-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.drift-ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--ripple-x, 50%) var(--ripple-y, 50%),
+    rgba(0, 90, 240, 0.18) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0);
+  transition: none;
+}
+
+.drift-ripple.rippling::after {
+  animation: rippleSpread 0.55s var(--drift-ripple) forwards;
+}
+
+/* 导航链接也加轻水波 */
+.nav-links a {
+  position: relative;
+  overflow: hidden;
+}
+
+/* TOC 链接点击水波 */
+#TableOfContents a,
+.mobile-toc-body a {
+  position: relative;
+  overflow: hidden;
+}
+
+#TableOfContents a::after,
+.mobile-toc-body a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(0, 90, 240, 0.12) 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0);
+  transition: none;
+}
+
+#TableOfContents a.rippling::after,
+.mobile-toc-body a.rippling::after {
+  animation: rippleSpread 0.45s var(--drift-ripple) forwards;
+}
+
+
+/* ─────────────────────────────────────────────
+   3. 章节"浮出水面"进入视口 (driftIn)
+   预设为透明，JS 使用 IntersectionObserver 触发
+   ───────────────────────────────────────────── */
+
+/* 初始隐态：被 JS 打上 data-drift="pending" */
+[data-drift="pending"] {
+  opacity: 0;
+  transform: translateY(14px);
+  /* 不用 will-change: 避免合成层过多 */
+}
+
+/* 进入视口后 JS 换成 data-drift="done" */
+[data-drift="done"] {
+  animation: driftIn 0.55s var(--drift-fade) both;
+}
+
+
+/* ─────────────────────────────────────────────
+   4. TOC 当前项平滑浮标
+   在桌面端 #TableOfContents 中用伪元素实现滑动条
+   ───────────────────────────────────────────── */
+
+/* Desktop sidebar TOC 容器开启 relative 定位供绝对元素定位 */
+.sidebar .toc {
+  position: relative;
+}
+
+/* 浮标轨道线已有 border-left；这里在 JS 控制的 --toc-indicator-top 上叠加一个高亮点 */
+.sidebar .toc::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--toc-indicator-top, 0px);
+  width: 3px;
+  height: 1.5em;
+  background: var(--color-primary, #005AF0);
+  border-radius: 0 2px 2px 0;
+  opacity: 0;
+  transition:
+    top 0.35s var(--drift-stream),
+    opacity 0.25s ease;
+  pointer-events: none;
+}
+
+/* 当有活动项时显示浮标 */
+.sidebar .toc.has-active::before {
+  opacity: 1;
+}
+
+
+/* ─────────────────────────────────────────────
+   5. 横向表格惯性滑行 + 水雾遮罩
+   ───────────────────────────────────────────── */
+
+/* 包裹容器由 JS 动态创建，class=drift-table-wrap */
+.drift-table-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.drift-table-wrap > .drift-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 90, 240, 0.2) transparent;
+  padding-bottom: 4px;
+}
+
+.drift-table-wrap > .drift-table-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.drift-table-wrap > .drift-table-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.drift-table-wrap > .drift-table-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 90, 240, 0.25);
+  border-radius: 2px;
+}
+
+/* 水雾遮罩：左右两端用渐变模拟水汽 */
+.drift-table-wrap::before,
+.drift-table-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.2s ease;
+}
+
+.drift-table-wrap::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(255,255,255,0.92), transparent);
+  opacity: 0; /* 初始不显示（内容未溢出或已在最左边） */
+}
+
+.drift-table-wrap::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(255,255,255,0.92), transparent);
+}
+
+/* JS 在滚动时按需切换 */
+.drift-table-wrap.at-start::before  { opacity: 0; }
+.drift-table-wrap.at-end::after     { opacity: 0; }
+.drift-table-wrap.can-scroll::after { opacity: 1; }
+.drift-table-wrap.scrolling-mid::before { opacity: 1; }
+
+
+/* ─────────────────────────────────────────────
+   6. 代码块复制按钮浮力 & 复制成功弹簧反馈
+   ───────────────────────────────────────────── */
+
+.copy-code-button {
+  transition:
+    transform 0.35s var(--drift-spring),
+    opacity 0.2s ease,
+    background 0.2s ease;
+}
+
+.copy-code-button:hover {
+  transform: translateY(-2px);
+  background: rgba(40, 40, 40, 0.85);
+}
+
+.copy-code-button:active {
+  transform: scale(0.93);
+  transition-duration: 0.1s;
+}
+
+/* 复制成功弹簧动画 — 由 JS 添加 .copy-success class */
+.copy-code-button.copy-success {
+  animation: copyBounce 0.45s var(--drift-spring);
+  background: rgba(0, 170, 100, 0.85);
+}
+
+
+/* ─────────────────────────────────────────────
+   7. 卡片浮力（首页文章列表卡片）
+   ───────────────────────────────────────────── */
+
+.card {
+  transition:
+    transform 0.4s var(--drift-spring),
+    box-shadow 0.4s ease !important;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.09), 0 4px 8px rgba(0,0,0,0.06) !important;
+}
+
+
+/* ─────────────────────────────────────────────
+   8. prefers-reduced-motion 降级保障
+   ───────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-drift],
+  .mobile-toc-trigger,
+  .scrollToTop,
+  .copy-code-button,
+  .card,
+  .drift-ripple::after,
+  #TableOfContents a::after,
+  .sidebar .toc::before {
+    animation: none !important;
+    transition: opacity 0.15s ease !important;
+    transform: none !important;
+  }
+}
