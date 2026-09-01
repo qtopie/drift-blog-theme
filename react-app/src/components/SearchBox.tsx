@@ -104,6 +104,7 @@ export const SearchBox: React.FC = () => {
 
       {open && q && results.length > 0 && (
         <Card className="search-card" 
+          style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, width: '100%', zIndex: 1000, boxSizing: 'border-box' }}
           onMouseDown={(e) => {
             // Prevent input blur when clicking results
             e.preventDefault(); 
@@ -124,7 +125,9 @@ export const SearchBox: React.FC = () => {
       )}
 
       {open && q && !loading && results.length === 0 && (
-        <Card className="search-card">
+        <Card className="search-card"
+          style={{ position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, width: '100%', zIndex: 1000, boxSizing: 'border-box' }}
+        >
           <div className="search-empty">No results</div>
         </Card>
       )}
