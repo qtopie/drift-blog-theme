@@ -1,21 +1,182 @@
+/* Taxonomy / Term Page Styles */
 main {
-  max-width: 800px;
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 0 var(--space-2);
-  padding-top: var(--space-1);
+  padding: 2.5rem 1.5rem 4rem;
+  box-sizing: border-box;
 }
 
-.taxonomy-list .term {
-  display: inline-block;
-  margin-right: var(--space-2);
-  margin-bottom: var(--space-1);
-  padding: 0.2rem 0.5rem;
-  border-radius: var(--radius-1);
-  background: rgba(0, 90, 240, 0.08);
-  color: var(--color-text);
+.taxonomy-page {
+  width: 100%;
 }
 
-.taxonomy-list .term a {
-  color: var(--color-primary);
+/* 3. 标签与页面层级展示 */
+.taxonomy-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  display: flex;
+  align-items: center;
+}
+
+.tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(0, 90, 240, 0.06);
+  border: 1px solid rgba(0, 90, 240, 0.16);
+  border-radius: 9999px;
+  padding: 0.45rem 1rem;
+  box-shadow: 0 1px 3px rgba(0, 90, 240, 0.04);
+}
+
+.tag-hash {
+  color: var(--color-primary, #005af0);
+  font-size: 1.15rem;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+.tag-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+  display: inline;
+}
+
+.tag-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 90, 240, 0.12);
+  color: var(--color-primary, #005af0);
+  border-radius: 9999px;
+  padding: 0.1rem 0.55rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-left: 0.25rem;
+}
+
+.taxonomy-description {
+  margin-bottom: 2rem;
+  color: var(--color-text-muted, #64748b);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* 1. 标题排版与下划线降噪 */
+.article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.article-item {
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: transform 0.15s ease;
+}
+
+.article-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.article-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.35rem;
+  line-height: 1.45;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.article-title a {
+  color: #0f172a;
   text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.article-title a:hover {
+  color: var(--color-primary, #005af0);
+  text-decoration: none;
+}
+
+/* 2. 文章元信息（Meta Info） */
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 0.75rem;
+}
+
+.meta-date {
+  font-variant-numeric: tabular-nums;
+  color: #64748b;
+}
+
+.meta-dot {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  user-select: none;
+}
+
+.meta-reading-time {
+  color: #64748b;
+}
+
+.meta-categories {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  color: #475569;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 1px 6px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.category-tag:hover {
+  color: var(--color-primary, #005af0);
+  background: rgba(0, 90, 240, 0.08);
+  border-color: rgba(0, 90, 240, 0.2);
+  text-decoration: none;
+}
+
+/* 摘要展示 */
+.article-summary {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #475569;
+}
+
+@media (max-width: 640px) {
+  main {
+    padding: 1.5rem 1rem 3rem;
+  }
+  .article-title {
+    font-size: 1.2rem;
+    line-height: 1.4;
+  }
+  .article-item {
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
 }

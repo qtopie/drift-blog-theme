@@ -14,34 +14,37 @@
 <article id="content">
   <div class="metadata">
     <h1>{{ .Title }}</h1>
-    {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }}
-    {{ $dateHuman := .Date | time.Format ":date_long" }}
-    <time datetime="{{ $dateMachine }}">{{ $dateHuman }}</time>
+    <div class="post-meta-flow">
+      {{ $dateMachine := .Date | time.Format "2006-01-02T15:04:05-07:00" }}
+      {{ $dateHuman := .Date | time.Format ":date_long" }}
+      <time datetime="{{ $dateMachine }}" class="meta-date">
+        <svg class="meta-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span>{{ $dateHuman }}</span>
+      </time>
 
-    <div class="taxonomy">
-      <!-- Categories -->
-      {{ with .Params.Categories }}
-      <span id="post-categories">
-        <ul>
-          <li><strong>Categories</strong>:&nbsp;</li>
-          {{ range . }}
-          <li class="category-item"><a href="{{ $.Site.BaseURL }}categories/{{ . | urlize }}">{{ . }}</a> </li>
-          {{ end }}
-        </ul>
-      </span>
-      {{ end }}
+      <div class="taxonomy">
+        <!-- Categories -->
+        {{ with .Params.Categories }}
+        <span id="post-categories">
+          <ul>
+            {{ range . }}
+            <li class="category-item"><a href="{{ $.Site.BaseURL }}categories/{{ . | urlize }}">📁 {{ . }}</a></li>
+            {{ end }}
+          </ul>
+        </span>
+        {{ end }}
 
-      <!-- Tags -->
-      {{ with .Params.tags }}
-      <span id="post-tags">
-        <ul>
-          <li><strong>Tags</strong>:&nbsp;</li>
-          {{ range . }}
-          <li class="tag-item"><a href="{{ $.Site.BaseURL }}tags/{{ . | urlize }}"><em>{{ . }}</em></a> </li>
-          {{ end }}
-        </ul>
-      </span>
-      {{ end }}
+        <!-- Tags -->
+        {{ with .Params.tags }}
+        <span id="post-tags">
+          <ul>
+            {{ range . }}
+            <li class="tag-item"><a href="{{ $.Site.BaseURL }}tags/{{ . | urlize }}">#{{ . }}</a></li>
+            {{ end }}
+          </ul>
+        </span>
+        {{ end }}
+      </div>
     </div>
   </div>
 

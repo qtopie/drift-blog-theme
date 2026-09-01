@@ -233,9 +233,9 @@ header nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
-  max-width: 1536px;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  max-width: 1200px;
   margin: 0 auto;
 }
 /* Brand title — Drift gradient — SPEC-HEADER-002 */
@@ -251,11 +251,20 @@ header nav h1 {
   -webkit-text-fill-color: transparent;
 }
 header nav a { text-decoration: none; color: var(--color-text); }
+
+/* Right action bar grouping translate + nav links */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 0 0 auto;
+}
+
 /* Nav links between title and search */
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 .nav-links a {
   position: relative;
@@ -296,21 +305,17 @@ header nav a { text-decoration: none; color: var(--color-text); }
   color: var(--color-primary, #005AF0);
 }
 /* Reserve fixed space for search to prevent layout shift */
-.search-root { flex: 0 1 640px; display: flex; justify-content: center; min-width: 0; }
+.search-root { flex: 0 1 360px; max-width: 360px; display: flex; justify-content: center; min-width: 0; }
 
-/* Google Translate widget: aligned with .nav-links text buttons — same
-   padding (0.35rem 0.75rem), 6px radius, hover glow sweep & accent, but
-   keeps the translate glyph instead of a label. Google's element.js wraps
-   the button in a <a> whose class is obfuscated (e.g.
-   VIpgJd-ZVi9od-xl07Ob-lTBxed) and changes over time, so style the stable
-   .goog-te-gadget-simple wrapper. */
+/* Google Translate widget: aligned with .nav-links text buttons — borderless icon */
 .translate-widget {
   flex: 0 0 auto;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  font-size: 0; /* hide "Powered by Google" text via child font-size reset */
+  justify-content: center;
+  font-size: 0;
 }
-.translate-widget .goog-te-gadget { font-size: 0; }
+.translate-widget .goog-te-gadget { font-size: 0; margin: 0; padding: 0; line-height: 1; }
 .translate-widget .goog-te-gadget img { display: none; } /* remove Google logo & arrow */
 .translate-widget .goog-te-gadget-simple {
   display: inline-flex;
@@ -318,14 +323,16 @@ header nav a { text-decoration: none; color: var(--color-text); }
   justify-content: center;
   position: relative;
   overflow: hidden;
-  padding: 0.35rem 0.75rem; /* matches .nav-links a */
-  border-radius: 6px;       /* matches .nav-links a */
-  background: transparent;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
   color: var(--color-text);
   cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
-/* Fluent Reveal Highlight: light sweep on hover — same as .nav-links a */
+/* Fluent Reveal Highlight: light sweep on hover */
 .translate-widget .goog-te-gadget-simple::before {
   content: '';
   position: absolute;
@@ -346,25 +353,17 @@ header nav a { text-decoration: none; color: var(--color-text); }
 .translate-widget .goog-te-gadget-simple:hover::before {
   left: 125%;
 }
-/* Fluent hover: acrylic background + accent color — same as .nav-links a */
+/* Fluent hover: acrylic background + accent color */
 .translate-widget .goog-te-gadget-simple:hover {
-  background: rgba(0, 90, 240, 0.08);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  background: rgba(0, 90, 240, 0.08) !important;
   color: var(--color-primary, #005AF0);
 }
 .translate-widget .goog-te-gadget-simple:focus,
 .translate-widget .goog-te-gadget-simple:focus-within {
-  outline: 2px solid #0F6CBD; /* Fluent CompoundBrandStroke focus ring */
-  outline-offset: 2px;
+  outline: none;
 }
 /* Google's element.js renders the button label as <span> texts, <img>
-   glyphs and a flag sprite, all wrapped in a <a> whose class is obfuscated
-   (e.g. VIpgJd-ZVi9od-xl07Ob-lTBxed) and changes over time. The old
-   .goog-te-menu-value selector no longer matches current DOM, so target the
-   stable .goog-te-gadget-simple structure instead. Hide every native label
-   child so only the custom translate icon shows. */
+   glyphs and a flag sprite. Hide every native label child so only the custom translate icon shows. */
 .translate-widget .goog-te-gadget-simple > img,
 .translate-widget .goog-te-gadget-simple a span,
 .translate-widget .goog-te-gadget-simple a img { display: none; }
@@ -427,14 +426,14 @@ header nav a { text-decoration: none; color: var(--color-text); }
   .search-root { flex: 0 1 480px; }
 }
 
-/* Mobile (≤ 767px): title+notes on one row, search below */
+/* Mobile (≤ 767px): title on left, nav & translate grouped top right, search streamlined */
 @media (max-width: 767px) {
   header nav {
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-rows: auto auto;
-    gap: 0.5rem 1rem;
-    padding: 0.75rem 1rem 1rem;
+    gap: 0.5rem 0.75rem;
+    padding: 0.5rem 1rem 0.65rem;
   }
   header nav > a:first-child {
     grid-column: 1;
@@ -442,29 +441,37 @@ header nav a { text-decoration: none; color: var(--color-text); }
     justify-self: start;
     align-self: center;
   }
-  .nav-links {
+  .nav-actions {
     grid-column: 2;
     grid-row: 1;
-    justify-content: end;
+    justify-self: end;
     align-self: center;
+    gap: 0.4rem;
+  }
+  .nav-links a {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.88rem;
+  }
+  .translate-widget .goog-te-gadget-simple {
+    padding: 0.25rem 0.5rem;
   }
   .search-root {
     grid-column: 1 / -1;
     grid-row: 2;
     width: 100%;
-  }
-  .translate-widget {
-    grid-column: 1 / -1;
-    grid-row: 3;
-    justify-self: end;
-    margin-top: 0.25rem;
+    max-width: 100%;
+    margin-top: 0.15rem;
   }
   .search-box {
     width: 100%;
     max-width: 100%;
   }
   .search-box.expanded { max-width: 100%; }
-  .search-input-wrap { width: 100%; }
+  .search-input-wrap {
+    width: 100%;
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
   .search-input { flex: 1; min-width: 0; }
   header nav h1 { font-size: 1.25rem; font-weight: 800; }
 }
@@ -2573,11 +2580,17 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin: 0;
   /* Fluent UI font stack — SPEC-HEADER-003 */
   font-family: var(--font-family-base);
 }
+main {
+  flex: 1 0 auto;
+  width: 100%;
+}
 /* If footer element or ampstart footer wrapper exists, push it to bottom */
 footer, .ampstart-footer {
+  flex-shrink: 0;
   margin-top: auto;
   width: 100%;
 }

@@ -1,7 +1,47 @@
 {{ define "main" }}
-  <h1>{{ .Title }}</h1>
-  {{ .Content }}
-  {{ range .Pages }}
-    <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+<div class="taxonomy-page">
+  <header class="taxonomy-header">
+    <div class="tag-badge">
+      <span class="tag-hash">#</span>
+      <h1 class="tag-title">{{ .Title }}</h1>
+      <span class="tag-count">{{ len .Pages }}</span>
+    </div>
+  </header>
+
+  {{ if .Content }}
+  <div class="taxonomy-description">
+    {{ .Content }}
+  </div>
   {{ end }}
+
+  <div class="article-list">
+    {{ range .Pages }}
+    <article class="article-item">
+      <h2 class="article-title">
+        <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+      </h2>
+      <div class="article-meta">
+        {{ if not .Date.IsZero }}
+        <time class="meta-date" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006-01-02" }}</time>
+        <span class="meta-dot">·</span>
+        {{ end }}
+        <span class="meta-reading-time">{{ .ReadingTime }} min read</span>
+        {{ with .Params.categories }}
+        <span class="meta-dot">·</span>
+        <span class="meta-categories">
+          {{ range . }}
+          <a href="{{ "/categories/" | relLangURL }}{{ . | urlize }}" class="category-tag">{{ . }}</a>
+          {{ end }}
+        </span>
+        {{ end }}
+      </div>
+      {{ if or .Summary .Description }}
+      <p class="article-summary">
+        {{ with .Description }}{{ . | plainify }}{{ else }}{{ .Summary | plainify | truncate 140 }}{{ end }}
+      </p>
+      {{ end }}
+    </article>
+    {{ end }}
+  </div>
+</div>
 {{ end }}
